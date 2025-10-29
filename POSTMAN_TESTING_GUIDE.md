@@ -8,11 +8,11 @@ Complete guide for testing the transformation middleware API.
 
 ## 🎯 API Endpoints
 
-| Endpoint | Input | Output | Purpose |
-|----------|-------|--------|---------|
-| `GET /health` | None | Status | Health check |
-| `POST /transform/map-to-adamo` | MAP Tool data (JSON) | ADAMO format (JSON) | Transform MAP → ADAMO |
-| `POST /transform/adamo-to-map` | ADAMO data (JSON) | MAP Tool format (JSON) | Transform ADAMO → MAP |
+| Endpoint                       | Input                | Output                 | Purpose               |
+| ------------------------------ | -------------------- | ---------------------- | --------------------- |
+| `GET /health`                  | None                 | Status                 | Health check          |
+| `POST /transform/map-to-adamo` | MAP Tool data (JSON) | ADAMO format (JSON)    | Transform MAP → ADAMO |
+| `POST /transform/adamo-to-map` | ADAMO data (JSON)    | MAP Tool format (JSON) | Transform ADAMO → MAP |
 
 ---
 
@@ -26,6 +26,7 @@ Complete guide for testing the transformation middleware API.
 **Body:** None
 
 **Response:**
+
 ```json
 {
   "status": "OK",
@@ -47,6 +48,7 @@ Complete guide for testing the transformation middleware API.
 **Method:** POST  
 **URL:** `http://localhost:8085/transform/map-to-adamo`  
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
@@ -54,6 +56,7 @@ Content-Type: application/json
 ### Request Body
 
 #### Minimum Required:
+
 ```json
 {
   "molecule": {
@@ -68,6 +71,7 @@ Content-Type: application/json
 ```
 
 #### Full Example (with Evaluation):
+
 ```json
 {
   "molecule": {
@@ -140,6 +144,7 @@ Content-Type: application/json
 ```
 
 ### Console Output:
+
 ```
 ✓ Transformed Molecule → MapInitial: GR-88-0681-1
   Chemist: Dr. Jane Kraft
@@ -159,6 +164,7 @@ Content-Type: application/json
 **Method:** POST  
 **URL:** `http://localhost:8085/transform/adamo-to-map`  
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
@@ -166,6 +172,7 @@ Content-Type: application/json
 ### Request Body
 
 #### Minimum Required:
+
 ```json
 {
   "session": {
@@ -185,6 +192,7 @@ Content-Type: application/json
 ```
 
 #### Full Example:
+
 ```json
 {
   "session": {
@@ -248,6 +256,7 @@ Content-Type: application/json
 ```
 
 ### Console Output:
+
 ```
 ✓ Transformed MapSession → Assessment: ADAMO-4111
   Stage: MAP 3
@@ -261,44 +270,44 @@ Content-Type: application/json
 
 ### MAP Tool Molecule Fields
 
-| Field | Type | Required | Max Length | Notes |
-|-------|------|----------|------------|-------|
-| `grNumber` | string | ✅ Yes | 14 | GR-YY-NNNNN-B format |
-| `regNumber` | string | No | 11 | Base GR number |
-| `chemistName` | string | No | 50 | Chemist name |
-| `status` | int | No | - | 0=None, 1=Map1, 2=Weak, 3=Odorless, 4=Ignore |
-| `assessed` | bool | No | - | - |
-| `quantity` | decimal | No | - | - |
-| `createdBy` | string | No | 50 | - |
-| `updatedBy` | string | No | 50 | - |
+| Field         | Type    | Required | Max Length | Notes                                        |
+| ------------- | ------- | -------- | ---------- | -------------------------------------------- |
+| `grNumber`    | string  | ✅ Yes   | 14         | GR-YY-NNNNN-B format                         |
+| `regNumber`   | string  | No       | 11         | Base GR number                               |
+| `chemistName` | string  | No       | 50         | Chemist name                                 |
+| `status`      | int     | No       | -          | 0=None, 1=Map1, 2=Weak, 3=Odorless, 4=Ignore |
+| `assessed`    | bool    | No       | -          | -                                            |
+| `quantity`    | decimal | No       | -          | -                                            |
+| `createdBy`   | string  | No       | 50         | -                                            |
+| `updatedBy`   | string  | No       | 50         | -                                            |
 
 ### ADAMO Session Fields
 
-| Field | Type | Required | Max Length | Notes |
-|-------|------|----------|------------|-------|
-| `sessionId` | long | ✅ Yes | - | - |
-| `stage` | string | No | 20 | MAP 0/1/2/3, ISC, FIB, FIM, CARDEX, RPMC |
-| `evaluationDate` | datetime | No | - | ISO 8601 format |
-| `region` | string | No | 2 | e.g., "US", "EU" |
-| `segment` | string | No | 2 | "CP" or "FF" |
-| `participants` | string | No | 1000 | - |
-| `createdBy` | string | No | **8** | ⚠️ Max 8 chars! |
-| `lastModifiedBy` | string | No | **8** | ⚠️ Max 8 chars! |
+| Field            | Type     | Required | Max Length | Notes                                    |
+| ---------------- | -------- | -------- | ---------- | ---------------------------------------- |
+| `sessionId`      | long     | ✅ Yes   | -          | -                                        |
+| `stage`          | string   | No       | 20         | MAP 0/1/2/3, ISC, FIB, FIM, CARDEX, RPMC |
+| `evaluationDate` | datetime | No       | -          | ISO 8601 format                          |
+| `region`         | string   | No       | 2          | e.g., "US", "EU"                         |
+| `segment`        | string   | No       | 2          | "CP" or "FF"                             |
+| `participants`   | string   | No       | 1000       | -                                        |
+| `createdBy`      | string   | No       | **8**      | ⚠️ Max 8 chars!                          |
+| `lastModifiedBy` | string   | No       | **8**      | ⚠️ Max 8 chars!                          |
 
 ### ADAMO Result Fields
 
-| Field | Type | Required | Max Length | Notes |
-|-------|------|----------|------------|-------|
-| `resultId` | long | No | - | - |
-| `sessionId` | long | ✅ Yes | - | Must match session |
-| `grNumber` | string | ✅ Yes | 14 | - |
-| `odor` | string | No | 1000 | - |
-| `benchmarkComments` | string | No | 2000 | - |
-| `result` | int | No | - | Score (typically 1-5) |
-| `dilution` | string | No | 20 | - |
-| `sponsor` | string | No | 255 | - |
-| `createdBy` | string | No | **8** | ⚠️ Max 8 chars! |
-| `lastModifiedBy` | string | No | **8** | ⚠️ Max 8 chars! |
+| Field               | Type   | Required | Max Length | Notes                 |
+| ------------------- | ------ | -------- | ---------- | --------------------- |
+| `resultId`          | long   | No       | -          | -                     |
+| `sessionId`         | long   | ✅ Yes   | -          | Must match session    |
+| `grNumber`          | string | ✅ Yes   | 14         | -                     |
+| `odor`              | string | No       | 1000       | -                     |
+| `benchmarkComments` | string | No       | 2000       | -                     |
+| `result`            | int    | No       | -          | Score (typically 1-5) |
+| `dilution`          | string | No       | 20         | -                     |
+| `sponsor`           | string | No       | 255        | -                     |
+| `createdBy`         | string | No       | **8**      | ⚠️ Max 8 chars!       |
+| `lastModifiedBy`    | string | No       | **8**      | ⚠️ Max 8 chars!       |
 
 ---
 
@@ -307,11 +316,13 @@ Content-Type: application/json
 ### Using cURL (Windows PowerShell)
 
 **Health Check:**
+
 ```bash
 curl http://localhost:8085/health
 ```
 
 **MAP Tool → ADAMO:**
+
 ```bash
 curl -X POST http://localhost:8085/transform/map-to-adamo `
   -H "Content-Type: application/json" `
@@ -319,6 +330,7 @@ curl -X POST http://localhost:8085/transform/map-to-adamo `
 ```
 
 **ADAMO → MAP Tool:**
+
 ```bash
 curl -X POST http://localhost:8085/transform/adamo-to-map `
   -H "Content-Type: application/json" `
@@ -328,6 +340,7 @@ curl -X POST http://localhost:8085/transform/adamo-to-map `
 ### Using PowerShell Invoke-RestMethod
 
 **MAP Tool → ADAMO:**
+
 ```powershell
 $body = Get-Content test-map-to-adamo.json -Raw
 Invoke-RestMethod -Uri "http://localhost:8085/transform/map-to-adamo" `
@@ -337,6 +350,7 @@ Invoke-RestMethod -Uri "http://localhost:8085/transform/map-to-adamo" `
 ```
 
 **ADAMO → MAP Tool:**
+
 ```powershell
 $body = Get-Content test-adamo-to-map.json -Raw
 Invoke-RestMethod -Uri "http://localhost:8085/transform/adamo-to-map" `
@@ -430,6 +444,7 @@ Import this into Postman:
 ### Error 1: Missing Required Field
 
 **Request:**
+
 ```json
 {
   "molecule": {}
@@ -437,6 +452,7 @@ Import this into Postman:
 ```
 
 **Response (400):**
+
 ```json
 {
   "status": "fail",
@@ -447,6 +463,7 @@ Import this into Postman:
 ### Error 2: Field Too Long
 
 **Request:**
+
 ```json
 {
   "session": {...},
@@ -457,13 +474,16 @@ Import this into Postman:
 ```
 
 **Response (400):**
+
 ```json
 {
   "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
   "title": "One or more validation errors occurred.",
   "status": 400,
   "errors": {
-    "Result.CreatedBy": ["The field CreatedBy must be a string with a maximum length of 8."]
+    "Result.CreatedBy": [
+      "The field CreatedBy must be a string with a maximum length of 8."
+    ]
   }
 }
 ```
@@ -473,6 +493,7 @@ Import this into Postman:
 ### Error 3: Invalid JSON
 
 **Request:**
+
 ```json
 {
   "molecule": {
@@ -481,13 +502,16 @@ Import this into Postman:
 ```
 
 **Response (400):**
+
 ```json
 {
   "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
   "title": "One or more validation errors occurred.",
   "status": 400,
   "errors": {
-    "$": ["'}' is invalid after a value. Expected either ',', '}', or ']'. Path: $ | LineNumber: 3 | BytePositionInLine: 2."]
+    "$": [
+      "'}' is invalid after a value. Expected either ',', '}', or ']'. Path: $ | LineNumber: 3 | BytePositionInLine: 2."
+    ]
   }
 }
 ```
@@ -521,29 +545,29 @@ curl -X POST http://localhost:8085/transform/adamo-to-map \
 
 ### MAP Tool → ADAMO Mapping
 
-| From (MAP Tool) | To (ADAMO) |
-|-----------------|------------|
-| `molecule.grNumber` | `grNumber` |
-| `molecule.regNumber` | `regNumber` |
-| `molecule.chemistName` | `chemist` |
-| `evaluation.odor0h` | `odor0H` |
-| `evaluation.odor4h` | `odor4H` |
-| `evaluation.odor24h` | `odor24H` |
-| `molecule.createdBy` | `createdBy` |
-| `molecule.updatedBy` | `lastModifiedBy` |
-| (Constructed) | `comments` |
+| From (MAP Tool)        | To (ADAMO)       |
+| ---------------------- | ---------------- |
+| `molecule.grNumber`    | `grNumber`       |
+| `molecule.regNumber`   | `regNumber`      |
+| `molecule.chemistName` | `chemist`        |
+| `evaluation.odor0h`    | `odor0H`         |
+| `evaluation.odor4h`    | `odor4H`         |
+| `evaluation.odor24h`   | `odor24H`        |
+| `molecule.createdBy`   | `createdBy`      |
+| `molecule.updatedBy`   | `lastModifiedBy` |
+| (Constructed)          | `comments`       |
 
 ### ADAMO → MAP Tool Mapping
 
-| From (ADAMO) | To (MAP Tool) |
-|--------------|---------------|
-| `session.sessionId` | `sessionName` (formatted) |
-| `session.evaluationDate` | `dateTime` |
-| `session.stage` | `stage` |
-| `session.region` | `region` |
-| `session.segment` | `segment` |
-| `session.createdBy` | `createdBy` |
-| `session.lastModifiedBy` | `updatedBy` |
+| From (ADAMO)             | To (MAP Tool)             |
+| ------------------------ | ------------------------- |
+| `session.sessionId`      | `sessionName` (formatted) |
+| `session.evaluationDate` | `dateTime`                |
+| `session.stage`          | `stage`                   |
+| `session.region`         | `region`                  |
+| `session.segment`        | `segment`                 |
+| `session.createdBy`      | `createdBy`               |
+| `session.lastModifiedBy` | `updatedBy`               |
 
 ---
 
@@ -586,16 +610,19 @@ docker logs map2adamoint-api --tail 50
 ## 🚀 Quick Start
 
 1. Start API:
+
    ```bash
    docker-compose up -d
    ```
 
 2. Verify health:
+
    ```bash
    curl http://localhost:8085/health
    ```
 
 3. Test transformations:
+
    ```bash
    curl -X POST http://localhost:8085/transform/map-to-adamo \
      -H "Content-Type: application/json" \
@@ -612,6 +639,7 @@ docker logs map2adamoint-api --tail 50
 ## ⚡ No Dummy Data!
 
 **Important:** The API does NOT create or prefill ANY data. It ONLY:
+
 - ✅ Accepts your data
 - ✅ Transforms the format
 - ✅ Returns transformed data
