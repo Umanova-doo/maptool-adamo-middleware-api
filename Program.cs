@@ -18,32 +18,59 @@ Console.WriteLine("  MAP2ADAMOINT Middleware API");
 Console.WriteLine("  Data transformation between ADAMO and MAP Tool");
 Console.WriteLine("═══════════════════════════════════════════════════════");
 
-// Configure database contexts (always available, but writes can be disabled)
-var mapToolConnStr = builder.Configuration.GetConnectionString("MapToolDb")
-    ?? Environment.GetEnvironmentVariable("MAPTOOL_CONNECTION_STRING");
-var adamoConnStr = builder.Configuration.GetConnectionString("AdamoDb")
-    ?? Environment.GetEnvironmentVariable("ADAMO_CONNECTION_STRING");
+// Configure database contexts - reads from appsettings.json ConnectionStrings section
+var mapToolConnStr = builder.Configuration.GetConnectionString("MapToolDb");
+var adamoConnStr = builder.Configuration.GetConnectionString("AdamoDb");
 
+// Configure PostgreSQL for MAP Tool
 if (!string.IsNullOrEmpty(mapToolConnStr) && mapToolConnStr != "CONFIGURE_ME")
 {
-    builder.Services.AddDbContext<MapToolContext>(options =>
-        options.UseNpgsql(mapToolConnStr));
-    Console.WriteLine("  ✓ PostgreSQL context configured");
+    try
+    {
+        builder.Services.AddDbContext<MapToolContext>(options =>
+            options.UseNpgsql(mapToolConnStr));
+        Console.WriteLine($"  ✓ PostgreSQL configured: {ExtractHost(mapToolConnStr)}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"  ✗ PostgreSQL configuration error: {ex.Message}");
+    }
 }
 else
 {
-    Console.WriteLine("  ⚠ PostgreSQL not configured (transformation-only mode)");
+    Console.WriteLine("  ⚠ PostgreSQL not configured (set in appsettings.json)");
 }
 
+// Configure Oracle for ADAMO
 if (!string.IsNullOrEmpty(adamoConnStr) && adamoConnStr != "CONFIGURE_ME")
 {
-    builder.Services.AddDbContext<AdamoContext>(options =>
-        options.UseOracle(adamoConnStr));
-    Console.WriteLine("  ✓ Oracle context configured");
+    try
+    {
+        builder.Services.AddDbContext<AdamoContext>(options =>
+            options.UseOracle(adamoConnStr));
+        Console.WriteLine($"  ✓ Oracle configured: {ExtractDataSource(adamoConnStr)}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"  ✗ Oracle configuration error: {ex.Message}");
+    }
 }
 else
 {
-    Console.WriteLine("  ⚠ Oracle not configured (transformation-only mode)");
+    Console.WriteLine("  ⚠ Oracle not configured (set in appsettings.json)");
+}
+
+// Helper to extract host from connection string for display
+static string ExtractHost(string connStr)
+{
+    var hostPart = connStr.Split(';').FirstOrDefault(p => p.StartsWith("Host=", StringComparison.OrdinalIgnoreCase));
+    return hostPart?.Split('=')[1] ?? "configured";
+}
+
+static string ExtractDataSource(string connStr)
+{
+    var dsPart = connStr.Split(';').FirstOrDefault(p => p.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase));
+    return dsPart?.Split('=')[1] ?? "configured";
 }
 
 Console.WriteLine($"  Database Writes: {(enableWrites ? "ENABLED ✓" : "DISABLED (transformation only)")}");

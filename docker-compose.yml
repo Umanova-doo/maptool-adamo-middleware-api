@@ -10,4 +10,10 @@ services:
       - "8085:8085"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
+    # Note: Credentials are read from appsettings.json inside the container
+    # For localhost databases from Docker, appsettings.json should use:
+    # Host=host.docker.internal (not localhost) for PostgreSQL
+    # Data Source=host.docker.internal:4040/FREEPDB1 for Oracle
