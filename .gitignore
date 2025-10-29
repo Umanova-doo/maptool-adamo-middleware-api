@@ -378,6 +378,11 @@ FodyWeavers.xsd
 .env.local
 .env.production
 
+# Configuration files with real credentials
+appsettings.json
+appsettings.*.json
+!appsettings.Development.json
+
 # Database files
 *.db
 *.sqlite

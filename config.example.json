@@ -1,0 +1,11 @@
+{
+  "ConnectionStrings": {
+    "MapToolDb": "Host=YOUR_POSTGRES_HOST;Port=5432;Database=MAP23;Username=YOUR_USERNAME;Password=YOUR_PASSWORD",
+    "AdamoDb": "User Id=YOUR_ORACLE_USER;Password=YOUR_ORACLE_PASSWORD;Data Source=YOUR_ORACLE_HOST:1521/XE"
+  },
+  "DatabaseFeatures": {
+    "EnableDatabaseWrites": false,
+    "EnableMigration": false
+  }
+}
+
