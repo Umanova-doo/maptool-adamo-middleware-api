@@ -29,7 +29,7 @@ namespace MAP2ADAMOINT.Services
                 // Batch - Auto-extracted from GR_NUMBER by Oracle trigger (trailing digits)
                 
                 // ===== EVALUATION METADATA =====
-                EvaluationDate = evaluation?.EvaluationDate ?? evaluation?.CreatedAt?.Date, // Date of evaluation
+                EvaluationDate = evaluation?.CreatedAt?.Date, // Date of evaluation from CreatedAt
                 Chemist = molecule.ChemistName,                         // Chemist who performed evaluation
                 // Assessor = evaluation?.Assessor,                     // TODO: Not available in MAP Tool Molecule - would need to track separately
                 EvaluationSite = null,                                  // TODO: Map from evaluation.EvaluationSiteId (requires lookup table)
@@ -131,9 +131,9 @@ namespace MAP2ADAMOINT.Services
                 
                 // ===== AUDIT TRAIL =====
                 CreationDate = DateTime.Now,                            // Auto-set by sync process
-                CreatedBy = molEval.CreatedBy ?? "SYNC",               // User who created the evaluation
+                CreatedBy = "SYNC",                                     // Map1_1MoleculeEvaluation doesn't have CreatedBy field
                 LastModifiedDate = DateTime.Now,                        // Auto-updated
-                LastModifiedBy = molEval.UpdatedBy ?? "SYNC"           // Last user who modified
+                LastModifiedBy = "SYNC"                                 // Map1_1MoleculeEvaluation doesn't have UpdatedBy field
                 
                 // ===== FIELDS NOT DIRECTLY MAPPED =====
                 // Dilution should be mapped from DilutionSolvent lookup table
