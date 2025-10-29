@@ -7,6 +7,7 @@
 ## 🔑 Credentials Configured
 
 ### PostgreSQL (MAP Tool Database)
+
 ```
 ✅ Host: localhost (Docker: host.docker.internal)
 ✅ Port: 5433
@@ -17,6 +18,7 @@
 ```
 
 ### Oracle (ADAMO Database)
+
 ```
 ✅ Host: localhost (Docker: host.docker.internal)
 ✅ Port: 4040
@@ -27,6 +29,7 @@
 ```
 
 ### Configured In:
+
 - `appsettings.json` - For local development (localhost)
 - `appsettings.Docker.json` - For Docker (host.docker.internal)
 - Dockerfile automatically uses Docker version when building
@@ -42,12 +45,14 @@ docker-compose up -d
 ```
 
 **What happens:**
+
 1. Builds .NET 6 API
 2. Copies `appsettings.Docker.json` as `appsettings.json` in container
 3. Container uses `host.docker.internal` to access YOUR localhost databases
 4. Starts on port 8085
 
 **Verification:**
+
 ```bash
 # Check logs
 docker logs map2adamoint-api
@@ -70,12 +75,12 @@ Uses `appsettings.json` or `appsettings.Development.json` with direct `localhost
 
 ## 📡 API Endpoints (All Working)
 
-| Endpoint | Status | Database Access |
-|----------|--------|-----------------|
-| `GET /health` | ✅ Working | None |
-| `POST /transform/map-to-adamo` | ✅ Working | Read-only (when writes disabled) |
-| `POST /transform/adamo-to-map` | ✅ Working | Read-only (when writes disabled) |
-| `POST /migration/adamo-to-maptool` | ⏸️ Ready | Disabled (returns 403) |
+| Endpoint                           | Status     | Database Access                  |
+| ---------------------------------- | ---------- | -------------------------------- |
+| `GET /health`                      | ✅ Working | None                             |
+| `POST /transform/map-to-adamo`     | ✅ Working | Read-only (when writes disabled) |
+| `POST /transform/adamo-to-map`     | ✅ Working | Read-only (when writes disabled) |
+| `POST /migration/adamo-to-maptool` | ⏸️ Ready   | Disabled (returns 403)           |
 
 ---
 
@@ -114,7 +119,7 @@ ADAMO Tool                MAP2ADAMOINT API              MAP Tool
 ```json
 {
   "DatabaseFeatures": {
-    "EnableDatabaseWrites": true,   // ← Change to true
+    "EnableDatabaseWrites": true, // ← Change to true
     "EnableMigration": false
   }
 }
@@ -125,17 +130,21 @@ ADAMO Tool                MAP2ADAMOINT API              MAP Tool
 **In `Services/DatabaseService.cs`:**
 
 **Line ~36-37:**
+
 ```csharp
 // await _adamoContext.MapInitials.AddAsync(mapInitial);
 // await _adamoContext.SaveChangesAsync();
 ```
+
 **Remove the `//` to uncomment**
 
 **Line ~69-70:**
+
 ```csharp
 // await _mapToolContext.Assessments.AddAsync(assessment);
 // await _mapToolContext.SaveChangesAsync();
 ```
+
 **Remove the `//` to uncomment**
 
 ### Step 3: Rebuild and test
@@ -160,11 +169,12 @@ curl -X POST http://localhost:8085/transform/map-to-adamo \
 ### Step 1: Enable feature
 
 **In both appsettings files:**
+
 ```json
 {
   "DatabaseFeatures": {
     "EnableDatabaseWrites": true,
-    "EnableMigration": true        // ← Change to true
+    "EnableMigration": true // ← Change to true
   }
 }
 ```
@@ -174,12 +184,14 @@ curl -X POST http://localhost:8085/transform/map-to-adamo \
 **In `Services/MigrationService.cs`:**
 
 **Line ~105-106:**
+
 ```csharp
 // await _mapToolContext.Assessments.AddAsync(assessment);
 // await _mapToolContext.SaveChangesAsync();
 ```
 
 **Line ~145-146:**
+
 ```csharp
 // await _mapToolContext.Molecules.AddAsync(molecule);
 // await _mapToolContext.SaveChangesAsync();
@@ -203,14 +215,14 @@ curl -X POST http://localhost:8085/migration/adamo-to-maptool \
 
 ## 📊 Current Status Summary
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| API Container | ✅ Running | Port 8085 |
-| PostgreSQL Connection | ✅ Configured | Can read (writes disabled) |
-| Oracle Connection | ✅ Configured | Can read (writes disabled) |
-| Transformation | ✅ Working | Pure transformation |
-| Database Writes | ⏸️ Ready | Needs uncommenting |
-| Migration | ⏸️ Ready | Needs feature flag + uncommenting |
+| Component             | Status        | Notes                             |
+| --------------------- | ------------- | --------------------------------- |
+| API Container         | ✅ Running    | Port 8085                         |
+| PostgreSQL Connection | ✅ Configured | Can read (writes disabled)        |
+| Oracle Connection     | ✅ Configured | Can read (writes disabled)        |
+| Transformation        | ✅ Working    | Pure transformation               |
+| Database Writes       | ⏸️ Ready      | Needs uncommenting                |
+| Migration             | ⏸️ Ready      | Needs feature flag + uncommenting |
 
 ---
 
@@ -281,4 +293,3 @@ docker ps
 
 **Start command:** `docker-compose up -d`  
 **Test command:** `curl http://localhost:8085/health`
-
