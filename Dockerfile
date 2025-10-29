@@ -25,8 +25,9 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Copy Docker-specific configuration (uses host.docker.internal for localhost databases)
+# Copy Docker-specific configuration for both base and Development
 COPY appsettings.Docker.json ./appsettings.json
+COPY appsettings.Docker.json ./appsettings.Development.json
 
 EXPOSE 8085
 

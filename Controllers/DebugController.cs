@@ -40,34 +40,60 @@ namespace MAP2ADAMOINT.Controllers
 
             try
             {
-                // Query first 5 molecules
-                var molecules = await _mapToolContext.Molecules
-                    .Where(m => !m.IsArchived)
-                    .OrderByDescending(m => m.Id)
-                    .Take(5)
-                    .Select(m => new
+                // Test connection by executing a simple query
+                var canConnect = await _mapToolContext.Database.CanConnectAsync();
+                
+                if (!canConnect)
+                {
+                    Console.WriteLine("✗ PostgreSQL: Cannot connect to database");
+                    return StatusCode(500, new
                     {
-                        m.Id,
-                        m.GrNumber,
-                        m.RegNumber,
-                        m.ChemistName,
-                        m.Status,
-                        m.Assessed,
-                        m.CreatedAt
-                    })
-                    .ToListAsync();
+                        status = "fail",
+                        message = "Cannot connect to PostgreSQL database"
+                    });
+                }
 
-                Console.WriteLine($"✓ PostgreSQL connection successful - Found {molecules.Count} molecules");
+                // Try to query molecules (may not exist yet)
+                var molecules = new List<dynamic>();
+                try
+                {
+                    var moleculeData = await _mapToolContext.Molecules
+                        .Where(m => !m.IsArchived)
+                        .OrderByDescending(m => m.Id)
+                        .Take(5)
+                        .Select(m => new
+                        {
+                            m.Id,
+                            m.GrNumber,
+                            m.RegNumber,
+                            m.ChemistName,
+                            m.Status,
+                            m.Assessed,
+                            m.CreatedAt
+                        })
+                        .ToListAsync();
+                    molecules = moleculeData.Cast<dynamic>().ToList();
+                }
+                catch (Exception tableEx)
+                {
+                    // Table doesn't exist - that's okay for demo
+                    Console.WriteLine($"⚠ PostgreSQL connected but Molecule table not found (empty DB): {tableEx.Message}");
+                }
+
+                Console.WriteLine($"✓ PostgreSQL connection successful - Database exists, {molecules.Count} molecules found");
 
                 return Ok(new
                 {
                     status = "success",
                     message = "PostgreSQL connection working",
                     database = "MAP Tool (PostgreSQL)",
-                    connection = "host.docker.internal:5433/MAP23",
+                    connection = "map2-postgres:5432/MAP23",
+                    schema = "map_adm",
                     table = "Molecule",
+                    connectionStatus = "CONNECTED ✓",
                     recordsFound = molecules.Count,
-                    sampleData = molecules
+                    note = molecules.Count == 0 ? "Database connected successfully but table is empty or doesn't exist yet" : null,
+                    sampleData = molecules.Take(3).ToList()
                 });
             }
             catch (Exception ex)
@@ -104,33 +130,58 @@ namespace MAP2ADAMOINT.Controllers
 
             try
             {
-                // Query first 5 sessions
-                var sessions = await _adamoContext.MapSessions
-                    .OrderByDescending(s => s.SessionId)
-                    .Take(5)
-                    .Select(s => new
+                // Test connection
+                var canConnect = await _adamoContext.Database.CanConnectAsync();
+                
+                if (!canConnect)
+                {
+                    Console.WriteLine("✗ Oracle: Cannot connect to database");
+                    return StatusCode(500, new
                     {
-                        s.SessionId,
-                        s.Stage,
-                        s.EvaluationDate,
-                        s.Region,
-                        s.Segment,
-                        s.Participants
-                    })
-                    .ToListAsync();
+                        status = "fail",
+                        message = "Cannot connect to Oracle database"
+                    });
+                }
 
-                Console.WriteLine($"✓ Oracle connection successful - Found {sessions.Count} sessions");
+                // Try to query sessions (may not exist yet)
+                var sessions = new List<dynamic>();
+                try
+                {
+                    var sessionData = await _adamoContext.MapSessions
+                        .OrderByDescending(s => s.SessionId)
+                        .Take(5)
+                        .Select(s => new
+                        {
+                            s.SessionId,
+                            s.Stage,
+                            s.EvaluationDate,
+                            s.Region,
+                            s.Segment,
+                            s.Participants
+                        })
+                        .ToListAsync();
+                    sessions = sessionData.Cast<dynamic>().ToList();
+                }
+                catch (Exception tableEx)
+                {
+                    // Table doesn't exist - that's okay for demo
+                    Console.WriteLine($"⚠ Oracle connected but MAP_SESSION table not found (empty DB): {tableEx.Message}");
+                }
+
+                Console.WriteLine($"✓ Oracle connection successful - Database exists, {sessions.Count} sessions found");
 
                 return Ok(new
                 {
                     status = "success",
                     message = "Oracle connection working",
                     database = "ADAMO (Oracle)",
-                    connection = "host.docker.internal:4040/FREEPDB1",
+                    connection = "oracle-map-db:1521/FREEPDB1",
                     schema = "GIV_MAP",
                     table = "MAP_SESSION",
+                    connectionStatus = "CONNECTED ✓",
                     recordsFound = sessions.Count,
-                    sampleData = sessions
+                    note = sessions.Count == 0 ? "Database connected successfully but table is empty or doesn't exist yet" : null,
+                    sampleData = sessions.Take(3).ToList()
                 });
             }
             catch (Exception ex)

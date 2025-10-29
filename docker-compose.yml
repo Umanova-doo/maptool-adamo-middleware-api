@@ -10,10 +10,13 @@ services:
       - "8085:8085"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    networks:
+      - map2_map2-network
     restart: unless-stopped
-    # Note: Credentials are read from appsettings.json inside the container
-    # For localhost databases from Docker, appsettings.json should use:
-    # Host=host.docker.internal (not localhost) for PostgreSQL
-    # Data Source=host.docker.internal:4040/FREEPDB1 for Oracle
+    # Connected to same network as your database containers:
+    # - map2-postgres (PostgreSQL on map2_map2-network)
+    # - oracle-map-db (Oracle on map2_map2-network)
+
+networks:
+  map2_map2-network:
+    external: true
