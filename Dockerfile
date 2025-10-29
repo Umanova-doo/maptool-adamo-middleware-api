@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY --from=build /app/publish .
 
+# Copy Docker-specific configuration (uses host.docker.internal for localhost databases)
+COPY appsettings.Docker.json ./appsettings.json
+
 EXPOSE 8085
 
 ENTRYPOINT ["dotnet", "MAP2ADAMOINT.dll"]
