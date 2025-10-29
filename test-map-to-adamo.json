@@ -1,0 +1,19 @@
+{
+  "molecule": {
+    "grNumber": "GR-88-0681-1",
+    "regNumber": "GR-88-0681",
+    "chemistName": "Dr. Kraft",
+    "status": 1,
+    "assessed": true,
+    "quantity": 100
+  },
+  "evaluation": {
+    "odor0h": "Resinous cypress, natural, pine needles, slightly fruity",
+    "odor4h": "Linear",
+    "odor24h": "Woody cedarwood",
+    "benchmark": "Similar to natural cedarwood oil",
+    "resultCP": 4,
+    "resultFF": 3
+  }
+}
+

@@ -2,163 +2,87 @@ using Microsoft.AspNetCore.Mvc;
 using MAP2ADAMOINT.Models.Adamo;
 using MAP2ADAMOINT.Models.MapTool;
 using MAP2ADAMOINT.Services;
+using System.Text.Json;
 
 namespace MAP2ADAMOINT.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class TestController : ControllerBase
+    [Route("transform")]
+    public class TransformController : ControllerBase
     {
         private readonly DataMapperService _mapper;
-        private readonly ILogger<TestController> _logger;
+        private readonly ILogger<TransformController> _logger;
 
-        public TestController(DataMapperService mapper, ILogger<TestController> logger)
+        public TransformController(DataMapperService mapper, ILogger<TransformController> logger)
         {
             _mapper = mapper;
             _logger = logger;
         }
 
         /// <summary>
-        /// Test MAP Tool Molecule → ADAMO MapInitial mapping
-        /// No database required - validates model mapping logic
+        /// Transform MAP Tool Molecule data to ADAMO MapInitial format
+        /// Receives complete Molecule and optional Map1_1MoleculeEvaluation data from MAP Tool
+        /// Returns ADAMO MapInitial format
         /// </summary>
         [HttpPost("map-to-adamo")]
-        public IActionResult TestMapToAdamo([FromBody] TestMapToAdamoRequest? request = null)
+        public IActionResult MapToolToAdamo([FromBody] MapToolTransformRequest request)
         {
-            _logger.LogInformation("Testing MAP Tool → ADAMO mapping");
+            _logger.LogInformation("Transform MAP Tool → ADAMO for GR: {GrNumber}", request.Molecule?.GrNumber);
 
             try
             {
-                // Create sample MAP Tool molecule
-                var molecule = new Molecule
+                if (request.Molecule == null)
                 {
-                    Id = 1,
-                    GrNumber = request?.GrNumber ?? "GR-88-0681-1",
-                    RegNumber = "GR-88-0681",
-                    ChemistName = "Dr. Smith",
-                    ChemicalName = "Test Compound",
-                    Status = MoleculeStatus.Map1,
-                    Assessed = true,
-                    Quantity = 100,
-                    CreatedBy = "TEST_USER",
-                    UpdatedBy = "TEST_USER",
-                    CreatedAt = DateTime.Now.AddDays(-30),
-                    UpdatedAt = DateTime.Now
-                };
-
-                // Create sample evaluation
-                var evaluation = new Map1_1MoleculeEvaluation
-                {
-                    Id = 1,
-                    MoleculeId = 1,
-                    Odor0h = "Fruity, fresh, apple-like with green notes",
-                    Odor4h = "Softer, more floral with persistent fruity character",
-                    Odor24h = "Woody, dry-down with subtle fruit undertones",
-                    Benchmark = "Similar to benchmark XYZ-123 but more natural",
-                    ResultCP = 4,
-                    ResultFF = 3,
-                    CreatedAt = DateTime.Now.AddDays(-30)
-                };
+                    return BadRequest(new { status = "fail", message = "Molecule data is required" });
+                }
 
                 // Perform mapping
-                var mapInitial = _mapper.MapMoleculeToMapInitial(molecule, evaluation);
+                var mapInitial = _mapper.MapMoleculeToMapInitial(request.Molecule, request.Evaluation);
 
-                Console.WriteLine("✓ Successfully mapped Molecule → MapInitial");
-                Console.WriteLine($"  GR Number: {mapInitial.GrNumber}");
-                Console.WriteLine($"  Chemist: {mapInitial.Chemist}");
-                Console.WriteLine($"  Odor 0h: {mapInitial.Odor0H}");
-                Console.WriteLine($"  Odor 4h: {mapInitial.Odor4H}");
-                Console.WriteLine($"  Odor 24h: {mapInitial.Odor24H}");
+                Console.WriteLine($"✓ Transformed Molecule → MapInitial: {mapInitial.GrNumber}");
+                Console.WriteLine($"  Chemist: {mapInitial.Chemist ?? "N/A"}");
+                Console.WriteLine($"  Odor 0h: {mapInitial.Odor0H ?? "N/A"}");
 
                 return Ok(new
                 {
                     status = "success",
-                    message = "Successfully validated MAP Tool → ADAMO mapping",
-                    source = new
-                    {
-                        type = "Molecule + Map1_1MoleculeEvaluation",
-                        grNumber = molecule.GrNumber,
-                        chemist = molecule.ChemistName,
-                        status = molecule.Status.ToString()
-                    },
-                    destination = new
-                    {
-                        type = "MapInitial",
-                        grNumber = mapInitial.GrNumber,
-                        regNumber = mapInitial.RegNumber,
-                        chemist = mapInitial.Chemist,
-                        evaluationDate = mapInitial.EvaluationDate,
-                        odor0h = mapInitial.Odor0H,
-                        odor4h = mapInitial.Odor4H,
-                        odor24h = mapInitial.Odor24H,
-                        dilution = mapInitial.Dilution,
-                        comments = mapInitial.Comments,
-                        createdBy = mapInitial.CreatedBy
-                    },
-                    fieldsMapped = 13,
-                    fieldsTotal = 16,
-                    completeness = "81%"
+                    message = $"Successfully transformed MAP Tool data to ADAMO format for {mapInitial.GrNumber}",
+                    transformed = mapInitial
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"✗ Failed to map Molecule → MapInitial: {ex.Message}");
-                _logger.LogError(ex, "Mapping test failed");
+                Console.WriteLine($"✗ Failed transformation MAP → ADAMO: {ex.Message}");
+                _logger.LogError(ex, "Transformation failed");
                 return StatusCode(500, new
                 {
                     status = "fail",
-                    message = ex.Message,
-                    stackTrace = ex.StackTrace
+                    message = ex.Message
                 });
             }
         }
 
         /// <summary>
-        /// Test ADAMO MapSession + MapResult → MAP Tool Assessment mapping
-        /// No database required - validates model mapping logic
+        /// Transform ADAMO MapSession + MapResult data to MAP Tool Assessment format
+        /// Receives MapSession and MapResult data from ADAMO
+        /// Returns MAP Tool Assessment format
         /// </summary>
         [HttpPost("adamo-to-map")]
-        public IActionResult TestAdamoToMap([FromBody] TestAdamoToMapRequest? request = null)
+        public IActionResult AdamoToMapTool([FromBody] AdamoTransformRequest request)
         {
-            _logger.LogInformation("Testing ADAMO → MAP Tool mapping");
+            _logger.LogInformation("Transform ADAMO → MAP Tool for Session: {SessionId}", request.Session?.SessionId);
 
             try
             {
-                // Create sample ADAMO session
-                var session = new MapSession
+                if (request.Session == null || request.Result == null)
                 {
-                    SessionId = request?.SessionId ?? 4111,
-                    Stage = "MAP 3",
-                    EvaluationDate = DateTime.Now.AddDays(-15),
-                    Region = "US",
-                    Segment = "CP",
-                    Participants = "John Doe, Jane Smith, Bob Johnson",
-                    ShowInTaskList = "N",
-                    CreatedBy = "ADMIN",
-                    LastModifiedBy = "ADMIN"
-                };
-
-                // Create sample ADAMO result
-                var result = new MapResult
-                {
-                    ResultId = 207,
-                    SessionId = session.SessionId,
-                    GrNumber = request?.GrNumber ?? "GR-86-6561-0",
-                    Odor = "Rosy, floral, peonile, geranium, interesting in DD but not powerful",
-                    BenchmarkComments = "CP: 02/09/2005, Status 1, FF: 04/15/2005, Status 1",
-                    Result = 1,
-                    Dilution = "10% in DPG",
-                    Sponsor = "Perfumery Lab Team",
-                    RegNumber = "GR-86-6561",
-                    CreatedBy = "EVALUATOR",
-                    LastModifiedBy = "EVALUATOR"
-                };
+                    return BadRequest(new { status = "fail", message = "Both Session and Result data are required" });
+                }
 
                 // Perform mapping
-                var assessment = _mapper.MapResultToAssessment(result, session);
+                var assessment = _mapper.MapResultToAssessment(request.Result, request.Session);
 
-                Console.WriteLine("✓ Successfully mapped MapSession + MapResult → Assessment");
-                Console.WriteLine($"  Session: {assessment.SessionName}");
+                Console.WriteLine($"✓ Transformed MapSession → Assessment: {assessment.SessionName}");
                 Console.WriteLine($"  Stage: {assessment.Stage}");
                 Console.WriteLine($"  Region: {assessment.Region}");
                 Console.WriteLine($"  Segment: {assessment.Segment}");
@@ -166,58 +90,53 @@ namespace MAP2ADAMOINT.Controllers
                 return Ok(new
                 {
                     status = "success",
-                    message = "Successfully validated ADAMO → MAP Tool mapping",
-                    source = new
-                    {
-                        type = "MapSession + MapResult",
-                        sessionId = session.SessionId,
-                        stage = session.Stage,
-                        region = session.Region,
-                        segment = session.Segment,
-                        grNumber = result.GrNumber,
-                        odor = result.Odor,
-                        resultScore = result.Result
-                    },
-                    destination = new
-                    {
-                        type = "Assessment",
-                        sessionName = assessment.SessionName,
-                        dateTime = assessment.DateTime,
-                        stage = assessment.Stage,
-                        region = assessment.Region,
-                        segment = assessment.Segment,
-                        status = assessment.Status,
-                        isClosed = assessment.IsClosed,
-                        createdBy = assessment.CreatedBy
-                    },
-                    fieldsMapped = 10,
-                    fieldsTotal = 13,
-                    completeness = "77%"
+                    message = $"Successfully transformed ADAMO data to MAP Tool format for session {request.Session.SessionId}",
+                    transformed = assessment
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"✗ Failed to map MapSession → Assessment: {ex.Message}");
-                _logger.LogError(ex, "Mapping test failed");
+                Console.WriteLine($"✗ Failed transformation ADAMO → MAP: {ex.Message}");
+                _logger.LogError(ex, "Transformation failed");
                 return StatusCode(500, new
                 {
                     status = "fail",
-                    message = ex.Message,
-                    stackTrace = ex.StackTrace
+                    message = ex.Message
                 });
             }
         }
     }
 
-    public class TestMapToAdamoRequest
+    /// <summary>
+    /// Request for transforming MAP Tool data to ADAMO format
+    /// </summary>
+    public class MapToolTransformRequest
     {
-        public string? GrNumber { get; set; }
+        /// <summary>
+        /// Molecule data from MAP Tool (REQUIRED)
+        /// </summary>
+        public Molecule? Molecule { get; set; }
+
+        /// <summary>
+        /// Optional evaluation data from MAP Tool
+        /// </summary>
+        public Map1_1MoleculeEvaluation? Evaluation { get; set; }
     }
 
-    public class TestAdamoToMapRequest
+    /// <summary>
+    /// Request for transforming ADAMO data to MAP Tool format
+    /// </summary>
+    public class AdamoTransformRequest
     {
-        public long? SessionId { get; set; }
-        public string? GrNumber { get; set; }
+        /// <summary>
+        /// Session data from ADAMO (REQUIRED)
+        /// </summary>
+        public MapSession? Session { get; set; }
+
+        /// <summary>
+        /// Result data from ADAMO (REQUIRED)
+        /// </summary>
+        public MapResult? Result { get; set; }
     }
 }
 
