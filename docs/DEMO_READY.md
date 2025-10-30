@@ -1,14 +1,15 @@
-# 🎯 DEMO READY - All 5 Endpoints Working
+# 🎯 DEMO READY - All 24 Endpoints Working
 
 ## ✅ Everything is Working for Tomorrow's Demo
 
 **API Running:** http://localhost:8085  
 **Container:** map2adamoint-api  
-**Status:** ✅ All endpoints operational
+**Status:** ✅ All 24 endpoints operational  
+**Models:** 8/8 ADAMO tables + 6/6 MAP Tool tables
 
 ---
 
-## 📡 Your 5 Demo Endpoints
+## 📡 Key Demo Endpoints (Start with these 5)
 
 ### 1️⃣ Health Check
 ```
@@ -160,6 +161,35 @@ Content-Type: application/json
    - "We can enable direct database writes"
    - "We have a migration endpoint for one-time bulk transfer"
    - "The transformation logic handles all field mappings"
+
+---
+
+## 🔍 Additional: Database Lookup Endpoints
+
+### ADAMO Lookups (10 endpoints)
+```
+GET /adamo/initial/gr/GR-88-0681-1       → Lookup by GR_NUMBER
+GET /adamo/session/4111                   → Lookup by SessionId
+GET /adamo/result/207                     → Lookup by ResultId
+GET /adamo/odor/gr/GR-88-0681-1          → Odor char by GR_NUMBER
+GET /adamo/odorfamily/5                   → Odor family by ID
+GET /adamo/odordescriptor/63              → Odor descriptor by ID
+GET /adamo/sessionlink/100/200            → CP/FF session link
+GET /adamo/ignored/GR-99-9999-9          → Ignored molecules
+```
+
+### MAP Tool Lookups (7 endpoints)
+```
+GET /maptool/molecule/gr/GR-88-0681-1    → Lookup by GR_NUMBER
+GET /maptool/molecule/123                 → Lookup by ID
+GET /maptool/assessment/456               → Assessment by ID
+GET /maptool/evaluation/789               → Evaluation by ID
+GET /maptool/moleculeevaluation/1011      → Molecule evaluation by ID
+GET /maptool/odorfamily/5                 → Odor family by ID
+GET /maptool/odordescriptor/25            → Odor descriptor by ID
+```
+
+**See `docs/ALL_ENDPOINTS.md` for complete reference**
 
 ---
 
