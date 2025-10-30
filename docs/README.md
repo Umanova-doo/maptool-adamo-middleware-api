@@ -59,4 +59,3 @@ All project documentation organized in one place.
 ---
 
 **For tomorrow's demo, start with [DEMO_READY.md](DEMO_READY.md)!** 🎯
-
