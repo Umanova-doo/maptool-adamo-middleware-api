@@ -7,12 +7,15 @@ All available endpoints in the MAP2ADAMOINT middleware API.
 ## 🏥 Health & Debug (5 endpoints)
 
 ### Health Check
+
 ```
 GET /health
 ```
+
 Returns API status
 
 ### Database Connectivity Tests
+
 ```
 GET /debug/test-postgres    → Test PostgreSQL connection
 GET /debug/test-oracle       → Test Oracle connection
@@ -25,18 +28,18 @@ GET /debug/test-both         → Test both databases
 
 **Base Route:** `/adamo/`
 
-| Endpoint | Lookup By | Example |
-|----------|-----------|---------|
-| `GET /adamo/initial/{id}` | MapInitialId | `/adamo/initial/12345` |
-| `GET /adamo/initial/gr/{grNumber}` | GR_NUMBER | `/adamo/initial/gr/GR-88-0681-1` |
-| `GET /adamo/session/{id}` | SessionId | `/adamo/session/4111` |
-| `GET /adamo/result/{id}` | ResultId | `/adamo/result/207` |
-| `GET /adamo/odor/{id}` | OdorCharacterizationId | `/adamo/odor/5000` |
-| `GET /adamo/odor/gr/{grNumber}` | GR_NUMBER | `/adamo/odor/gr/GR-88-0681-1` |
-| `GET /adamo/odorfamily/{id}` | FamilyId | `/adamo/odorfamily/5` |
-| `GET /adamo/odordescriptor/{id}` | DescriptorId | `/adamo/odordescriptor/63` |
-| `GET /adamo/sessionlink/{cpId}/{ffId}` | CP+FF Session IDs | `/adamo/sessionlink/100/200` |
-| `GET /adamo/ignored/{grNumber}` | GR_NUMBER | `/adamo/ignored/GR-99-9999-9` |
+| Endpoint                               | Lookup By              | Example                          |
+| -------------------------------------- | ---------------------- | -------------------------------- |
+| `GET /adamo/initial/{id}`              | MapInitialId           | `/adamo/initial/12345`           |
+| `GET /adamo/initial/gr/{grNumber}`     | GR_NUMBER              | `/adamo/initial/gr/GR-88-0681-1` |
+| `GET /adamo/session/{id}`              | SessionId              | `/adamo/session/4111`            |
+| `GET /adamo/result/{id}`               | ResultId               | `/adamo/result/207`              |
+| `GET /adamo/odor/{id}`                 | OdorCharacterizationId | `/adamo/odor/5000`               |
+| `GET /adamo/odor/gr/{grNumber}`        | GR_NUMBER              | `/adamo/odor/gr/GR-88-0681-1`    |
+| `GET /adamo/odorfamily/{id}`           | FamilyId               | `/adamo/odorfamily/5`            |
+| `GET /adamo/odordescriptor/{id}`       | DescriptorId           | `/adamo/odordescriptor/63`       |
+| `GET /adamo/sessionlink/{cpId}/{ffId}` | CP+FF Session IDs      | `/adamo/sessionlink/100/200`     |
+| `GET /adamo/ignored/{grNumber}`        | GR_NUMBER              | `/adamo/ignored/GR-99-9999-9`    |
 
 **Database:** Oracle (ADAMO)  
 **Schema:** GIV_MAP  
@@ -48,15 +51,15 @@ GET /debug/test-both         → Test both databases
 
 **Base Route:** `/maptool/`
 
-| Endpoint | Lookup By | Example |
-|----------|-----------|---------|
-| `GET /maptool/molecule/{id}` | Molecule Id | `/maptool/molecule/123` |
-| `GET /maptool/molecule/gr/{grNumber}` | GR_NUMBER | `/maptool/molecule/gr/GR-88-0681-1` |
-| `GET /maptool/assessment/{id}` | Assessment Id | `/maptool/assessment/456` |
-| `GET /maptool/evaluation/{id}` | Evaluation Id | `/maptool/evaluation/789` |
-| `GET /maptool/moleculeevaluation/{id}` | MoleculeEvaluation Id | `/maptool/moleculeevaluation/1011` |
-| `GET /maptool/odorfamily/{id}` | OdorFamily Id | `/maptool/odorfamily/5` |
-| `GET /maptool/odordescriptor/{id}` | OdorDescriptor Id | `/maptool/odordescriptor/25` |
+| Endpoint                               | Lookup By             | Example                             |
+| -------------------------------------- | --------------------- | ----------------------------------- |
+| `GET /maptool/molecule/{id}`           | Molecule Id           | `/maptool/molecule/123`             |
+| `GET /maptool/molecule/gr/{grNumber}`  | GR_NUMBER             | `/maptool/molecule/gr/GR-88-0681-1` |
+| `GET /maptool/assessment/{id}`         | Assessment Id         | `/maptool/assessment/456`           |
+| `GET /maptool/evaluation/{id}`         | Evaluation Id         | `/maptool/evaluation/789`           |
+| `GET /maptool/moleculeevaluation/{id}` | MoleculeEvaluation Id | `/maptool/moleculeevaluation/1011`  |
+| `GET /maptool/odorfamily/{id}`         | OdorFamily Id         | `/maptool/odorfamily/5`             |
+| `GET /maptool/odordescriptor/{id}`     | OdorDescriptor Id     | `/maptool/odordescriptor/25`        |
 
 **Database:** PostgreSQL (MAP Tool)  
 **Schema:** map_adm  
@@ -78,20 +81,21 @@ POST /transform/adamo-to-map     → Transform ADAMO → MAP Tool format
 ```
 POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool
 ```
+
 (Requires `EnableMigration: true`)
 
 ---
 
 ## 📊 Complete Endpoint Count
 
-| Category | Count |
-|----------|-------|
-| Health & Debug | 4 |
-| ADAMO Lookups | 10 |
-| MAP Tool Lookups | 7 |
-| Transformation | 2 |
-| Migration | 1 |
-| **TOTAL** | **24 endpoints** |
+| Category         | Count            |
+| ---------------- | ---------------- |
+| Health & Debug   | 4                |
+| ADAMO Lookups    | 10               |
+| MAP Tool Lookups | 7                |
+| Transformation   | 2                |
+| Migration        | 1                |
+| **TOTAL**        | **24 endpoints** |
 
 ---
 
@@ -131,6 +135,7 @@ curl http://localhost:8085/maptool/assessment/456
 ## 📋 Response Formats
 
 ### Success (200 OK)
+
 ```json
 {
   "status": "success",
@@ -145,6 +150,7 @@ curl http://localhost:8085/maptool/assessment/456
 ```
 
 ### Not Found (404)
+
 ```json
 {
   "status": "not_found",
@@ -155,6 +161,7 @@ curl http://localhost:8085/maptool/assessment/456
 ```
 
 ### Error (500)
+
 ```json
 {
   "status": "fail",
@@ -194,6 +201,7 @@ curl http://localhost:8085/maptool/assessment/456
 **NO hardcoded credentials anywhere!**
 
 All database connections use:
+
 - `builder.Configuration.GetConnectionString("MapToolDb")`
 - `builder.Configuration.GetConnectionString("AdamoDb")`
 - Proper Dependency Injection
@@ -201,4 +209,3 @@ All database connections use:
 ---
 
 **24 endpoints ready for your demo!** 🎉
-
