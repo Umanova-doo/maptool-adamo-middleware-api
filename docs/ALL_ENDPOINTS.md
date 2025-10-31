@@ -95,15 +95,15 @@ POST /transform/adamo-to-map     → Generic: Transform ADAMO Session+Result →
 
 **MAP Tool → ADAMO (7 endpoints):**
 
-| #   | Endpoint                                                  | Fetch From                       | Transform To               | Example                                          |
-| --- | --------------------------------------------------------- | -------------------------------- | -------------------------- | ------------------------------------------------ |
-| 11  | `POST /transform/odorfamily/maptool-to-adamo/{id}`        | MAP Tool OdorFamily              | ADAMO MAP_ODOR_FAMILY      | `/transform/odorfamily/maptool-to-adamo/5`       |
-| 12  | `POST /transform/odordescriptor/maptool-to-adamo/{id}`    | MAP Tool OdorDescriptor          | ADAMO MAP_ODOR_DESCRIPTOR  | `/transform/odordescriptor/maptool-to-adamo/25`  |
-| 13  | `POST /transform/molecule-to-initial/{id}`                | MAP Tool Molecule (by ID)        | ADAMO MAP_INITIAL          | `/transform/molecule-to-initial/123`             |
-| 14  | `POST /transform/molecule-to-initial/gr/{grNumber}`       | MAP Tool Molecule (by GR_NUMBER) | ADAMO MAP_INITIAL          | `/transform/molecule-to-initial/gr/GR-50-0789-0` |
-| 15  | `POST /transform/assessment-to-session/{assessmentId}`    | MAP Tool Assessment              | ADAMO MAP_SESSION          | `/transform/assessment-to-session/456`           |
-| 16  | `POST /transform/evaluation-to-session/{evaluationId}`    | MAP Tool Map1_1Evaluation        | ADAMO MAP_SESSION          | `/transform/evaluation-to-session/789`           |
-| 17  | `POST /transform/moleculeevaluation-to-result/{id}`       | MAP Tool Map1_1MoleculeEvaluation| ADAMO MAP_RESULT           | `/transform/moleculeevaluation-to-result/1011`   |
+| #   | Endpoint                                               | Fetch From                        | Transform To              | Example                                          |
+| --- | ------------------------------------------------------ | --------------------------------- | ------------------------- | ------------------------------------------------ |
+| 11  | `POST /transform/odorfamily/maptool-to-adamo/{id}`     | MAP Tool OdorFamily               | ADAMO MAP_ODOR_FAMILY     | `/transform/odorfamily/maptool-to-adamo/5`       |
+| 12  | `POST /transform/odordescriptor/maptool-to-adamo/{id}` | MAP Tool OdorDescriptor           | ADAMO MAP_ODOR_DESCRIPTOR | `/transform/odordescriptor/maptool-to-adamo/25`  |
+| 13  | `POST /transform/molecule-to-initial/{id}`             | MAP Tool Molecule (by ID)         | ADAMO MAP_INITIAL         | `/transform/molecule-to-initial/123`             |
+| 14  | `POST /transform/molecule-to-initial/gr/{grNumber}`    | MAP Tool Molecule (by GR_NUMBER)  | ADAMO MAP_INITIAL         | `/transform/molecule-to-initial/gr/GR-50-0789-0` |
+| 15  | `POST /transform/assessment-to-session/{assessmentId}` | MAP Tool Assessment               | ADAMO MAP_SESSION         | `/transform/assessment-to-session/456`           |
+| 16  | `POST /transform/evaluation-to-session/{evaluationId}` | MAP Tool Map1_1Evaluation         | ADAMO MAP_SESSION         | `/transform/evaluation-to-session/789`           |
+| 17  | `POST /transform/moleculeevaluation-to-result/{id}`    | MAP Tool Map1_1MoleculeEvaluation | ADAMO MAP_RESULT          | `/transform/moleculeevaluation-to-result/1011`   |
 
 **Query Parameters:**
 
