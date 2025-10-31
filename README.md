@@ -71,13 +71,13 @@ MAP2ADAMOINT/
 
 ### Quick Overview
 
-| Category             | Count | Examples                                                             |
-| -------------------- | ----- | -------------------------------------------------------------------- |
-| **Health & Debug**   | 4     | `/health`, `/debug/test-oracle`                                      |
-| **ADAMO Lookups**    | 10    | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}`                |
-| **MAP Tool Lookups** | 7     | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}`        |
+| Category             | Count | Examples                                                                             |
+| -------------------- | ----- | ------------------------------------------------------------------------------------ |
+| **Health & Debug**   | 4     | `/health`, `/debug/test-oracle`                                                      |
+| **ADAMO Lookups**    | 10    | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}`                                |
+| **MAP Tool Lookups** | 7     | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}`                        |
 | **Transformations**  | 16    | `/transform/map-to-adamo`, `/transform/initial-to-molecule/{id}` or `/gr/{grNumber}` |
-| **Migration**        | 2     | `/migration/adamo-to-maptool` (GET + POST)                           |
+| **Migration**        | 2     | `/migration/adamo-to-maptool` (GET + POST)                                           |
 
 **See [docs/ALL_ENDPOINTS.md](docs/ALL_ENDPOINTS.md) for complete reference**
 
