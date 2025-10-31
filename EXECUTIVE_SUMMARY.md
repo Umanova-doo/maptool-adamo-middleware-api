@@ -9,7 +9,7 @@ A **.NET 6 middleware API** that connects two separate molecule assessment syste
 ## The Problem
 
 - **ADAMO** (perfumery assessment tool) uses Oracle database
-- **MAP Tool** (molecule evaluation system) uses PostgreSQL database  
+- **MAP Tool** (molecule evaluation system) uses PostgreSQL database
 - Different schemas, different field names, different data structures
 - Teams need to share data between them but systems can't talk directly
 
@@ -29,16 +29,19 @@ We built a middleware API with **32 endpoints** that:
 ## Three Use Cases (All Ready)
 
 ### 1. Simple Transformation (No Database)
+
 - Tools send JSON → API transforms → returns transformed JSON
 - No database writes needed
 - **Status:** ✅ Working now
 
 ### 2. End-to-End Integration (With Database)
+
 - API fetches from source DB → transforms → writes to target DB
 - For periodic syncs or scheduled jobs
 - **Status:** ✅ Ready (inserts commented out)
 
 ### 3. Bulk Migration (One-Time)
+
 - Migrate thousands of records from ADAMO → MAP Tool
 - Processes 6 entity types systematically
 - **Status:** ✅ Ready (inserts commented out)
@@ -48,6 +51,7 @@ We built a middleware API with **32 endpoints** that:
 ## Current Status
 
 **✅ Complete & Tested**
+
 - 32 API endpoints operational
 - Both databases connected (verified with real data)
 - All 14 entity models implemented
@@ -55,6 +59,7 @@ We built a middleware API with **32 endpoints** that:
 - Proper .NET 6 architecture (no hardcoded credentials)
 
 **⏸️ Safety Mode (By Design)**
+
 - Database writes disabled by default
 - All insert operations commented out
 - Feature flags control dangerous operations
@@ -88,7 +93,7 @@ We built a middleware API with **32 endpoints** that:
 **Phase 1:** Enable database writes (uncomment ~20 lines)  
 **Phase 2:** Enable migration feature flag  
 **Phase 3:** Run small test batch  
-**Phase 4:** Production deployment  
+**Phase 4:** Production deployment
 
 ---
 
@@ -106,6 +111,7 @@ We built a middleware API with **32 endpoints** that:
 ## Bottom Line
 
 **We have a fully functional middleware API that can:**
+
 - Look up data from both databases ✅
 - Transform between the two formats ✅
 - Sync data between systems ✅ (ready but disabled)
@@ -118,4 +124,3 @@ We built a middleware API with **32 endpoints** that:
 ---
 
 **Status:** ✅ **READY FOR DEMO**
-
