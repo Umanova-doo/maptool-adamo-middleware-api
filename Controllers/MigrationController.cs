@@ -23,10 +23,50 @@ namespace MAP2ADAMOINT.Controllers
 
         /// <summary>
         /// ONE-TIME bulk migration from ADAMO (Oracle) to MAP Tool (PostgreSQL)
+        /// Simple GET endpoint - just trigger the migration with default settings
+        /// Requires EnableMigration = true in configuration
+        /// </summary>
+        [HttpGet("adamo-to-maptool")]
+        public async Task<IActionResult> MigrateAdamoToMapToolGet()
+        {
+            if (!_features.EnableMigration)
+            {
+                _logger.LogWarning("Migration endpoint called but feature is disabled");
+                return StatusCode(403, new
+                {
+                    status = "fail",
+                    message = "Migration feature is disabled. Set 'DatabaseFeatures:EnableMigration' to true in configuration."
+                });
+            }
+
+            // Use default options for simple GET
+            var options = new MigrationOptions
+            {
+                BatchSize = 1000,
+                MigrateOdorFamilies = true,
+                MigrateOdorDescriptors = true,
+                MigrateInitialData = true,
+                MigrateOdorCharacterizations = true,
+                MigrateIgnoredMolecules = false
+            };
+
+            _logger.LogInformation("GET Migration triggered with default settings");
+
+            Console.WriteLine("═══════════════════════════════════════════════════════");
+            Console.WriteLine("  MIGRATION TRIGGERED VIA GET");
+            Console.WriteLine("  Using default settings (batch: 1000, all entity types)");
+            Console.WriteLine("═══════════════════════════════════════════════════════");
+
+            return await ExecuteMigration(options);
+        }
+
+        /// <summary>
+        /// ONE-TIME bulk migration from ADAMO (Oracle) to MAP Tool (PostgreSQL)
+        /// POST endpoint with custom options
         /// Requires EnableMigration = true in configuration
         /// </summary>
         [HttpPost("adamo-to-maptool")]
-        public async Task<IActionResult> MigrateAdamoToMapTool([FromBody] MigrationOptions? options = null)
+        public async Task<IActionResult> MigrateAdamoToMapToolPost([FromBody] MigrationOptions? options = null)
         {
             if (!_features.EnableMigration)
             {
@@ -40,16 +80,24 @@ namespace MAP2ADAMOINT.Controllers
 
             options ??= new MigrationOptions();
 
-            _logger.LogInformation("Migration request received - BatchSize: {BatchSize}, StageFilter: {Stage}", 
+            _logger.LogInformation("POST Migration request - BatchSize: {BatchSize}, StageFilter: {Stage}", 
                 options.BatchSize, options.StageFilter ?? "ALL");
 
             Console.WriteLine("═══════════════════════════════════════════════════════");
-            Console.WriteLine("  STARTING MIGRATION: ADAMO → MAP Tool");
+            Console.WriteLine("  MIGRATION TRIGGERED VIA POST");
             Console.WriteLine($"  Batch Size: {options.BatchSize}");
             Console.WriteLine($"  Stage Filter: {options.StageFilter ?? "ALL"}");
             Console.WriteLine($"  Migrate Molecules: {options.MigrateInitialData}");
             Console.WriteLine("═══════════════════════════════════════════════════════");
 
+            return await ExecuteMigration(options);
+        }
+
+        /// <summary>
+        /// Shared migration execution logic for both GET and POST endpoints
+        /// </summary>
+        private async Task<IActionResult> ExecuteMigration(MigrationOptions options)
+        {
             var result = await _migrationService.MigrateAdamoToMapTool(options);
 
             if (result.Success)

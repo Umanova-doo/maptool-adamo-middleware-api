@@ -46,7 +46,7 @@ curl -X POST http://localhost:8085/transform/odorfamily/adamo-to-map/1
 ## 🎯 Three Integration Options
 
 1. **Generic Transformation** - Tools send JSON, we transform
-2. **End-to-End** - We fetch, transform, write  
+2. **End-to-End** - We fetch, transform, write
 3. **Bulk Migration** - One-time mass transfer (6 entity types)
 
 ---
@@ -71,4 +71,3 @@ curl -X POST http://localhost:8085/transform/odorfamily/adamo-to-map/1
 **GitHub:** https://github.com/Umanova-doo/maptool-adamo-middleware-api
 
 **Good luck! 🚀**
-

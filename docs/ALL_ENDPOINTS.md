@@ -109,24 +109,59 @@ POST /transform/adamo-to-map     → Generic: Transform ADAMO Session+Result →
 
 ---
 
-## 📦 Migration (1 endpoint)
+## 📦 Migration (2 endpoints - same functionality)
+
+### Simple GET (Recommended for One-Time Use)
 
 ```
-POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool (1000s of records)
+GET /migration/adamo-to-maptool → Just trigger migration with defaults
 ```
 
-(Requires `EnableMigration: true`)
+**Use Case:** Someone just wants to click a link or hit URL once  
+**Settings:** Uses defaults (batch: 1000, all entity types enabled)  
+**Example:**
+```bash
+# Simple - just GET the URL
+curl http://localhost:8085/migration/adamo-to-maptool
 
+# Or just paste in browser
+http://localhost:8085/migration/adamo-to-maptool
+```
+
+### Advanced POST (For Custom Options)
+
+```
+POST /migration/adamo-to-maptool → Bulk migration with custom settings
+```
+
+**Use Case:** Need to customize batch size, filter by stage, or disable certain entity types  
 **Request Body:**
 
 ```json
 {
-  "batchSize": 1000,
+  "batchSize": 500,
   "stageFilter": "MAP 3",
   "afterDate": "2024-01-01",
-  "migrateInitialData": true
+  "migrateInitialData": true,
+  "migrateOdorFamilies": true,
+  "migrateOdorDescriptors": true,
+  "migrateOdorCharacterizations": false,
+  "migrateIgnoredMolecules": false
 }
 ```
+
+**Both require:** `EnableMigration: true` in configuration
+
+---
+
+### What Migration Does (6 Steps)
+
+1. **OdorFamilies** - ADAMO MAP_ODOR_FAMILY (12) → MAP Tool OdorFamily
+2. **OdorDescriptors** - ADAMO MAP_ODOR_DESCRIPTOR (88) → MAP Tool OdorDescriptor
+3. **Molecules** - ADAMO MAP_INITIAL → MAP Tool Molecule
+4. **Assessments** - ADAMO MAP_SESSION → MAP Tool Assessment
+5. **OdorCharacterizations** - ADAMO ODOR_CHARACTERIZATION → MAP Tool OdorDetails (complex)
+6. **IgnoredMolecules** - ADAMO SUBMITTING_IGNORED_MOLECULES (optional - no MAP Tool equivalent)
 
 ---
 
@@ -139,8 +174,8 @@ POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool (1000s of
 | MAP Tool Lookups                | 7                |
 | Generic Transformations         | 2                |
 | Entity-Specific Transformations | 7                |
-| Migration                       | 1                |
-| **TOTAL**                       | **31 endpoints** |
+| Migration (GET + POST)          | 2                |
+| **TOTAL**                       | **32 endpoints** |
 
 ---
 
