@@ -645,6 +645,191 @@ namespace MAP2ADAMOINT.Controllers
             }
         }
 
+        /// <summary>
+        /// Transform MAP Tool Map1_1Evaluation to ADAMO MapSession
+        /// End-to-end: Fetch from MAP Tool by EvaluationId, transform, optionally write to ADAMO
+        /// </summary>
+        [HttpPost("evaluation-to-session/{evaluationId}")]
+        public async Task<IActionResult> TransformEvaluationToSession(int evaluationId, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from MAP Tool
+                var evaluation = await _mapToolContext.Map1_1Evaluations
+                    .Include(e => e.Assessment)
+                    .FirstOrDefaultAsync(e => e.Id == evaluationId);
+
+                if (evaluation == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"Evaluation {evaluationId} not found in MAP Tool" });
+                }
+
+                // Step 2: Transform to ADAMO format
+                var session = new MapSession
+                {
+                    Stage = evaluation.Assessment?.Stage ?? "Unknown",
+                    EvaluationDate = evaluation.EvaluationDate,
+                    Region = evaluation.Assessment?.Region,
+                    Segment = evaluation.Assessment?.Segment,
+                    Participants = evaluation.Participants,
+                    ShowInTaskList = "N",
+                    CreatedBy = evaluation.CreatedBy != null ? evaluation.CreatedBy.Substring(0, Math.Min(8, evaluation.CreatedBy.Length)) : "SYNC",
+                    LastModifiedBy = evaluation.UpdatedBy != null ? evaluation.UpdatedBy.Substring(0, Math.Min(8, evaluation.UpdatedBy.Length)) : "SYNC",
+                    CreationDate = evaluation.CreatedAt,
+                    LastModifiedDate = evaluation.UpdatedAt
+                };
+
+                Console.WriteLine($"✓ Transformed Map1_1Evaluation → MAP_SESSION: {evaluationId}");
+
+                // Step 3: Write to ADAMO (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    // TODO: Uncomment when ready
+                    // await _adamoContext.MapSessions.AddAsync(session);
+                    // await _adamoContext.SaveChangesAsync();
+                    Console.WriteLine($"[DRY RUN] Would insert MAP_SESSION for evaluation {evaluationId} to ADAMO");
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"Map1_1Evaluation → MAP_SESSION transformed",
+                    source = new { database = "MAP Tool", table = "Map1_1Evaluation", evaluationId },
+                    transformed = session,
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform Evaluation→Session for {EvaluationId}", evaluationId);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform ADAMO Map1SessionLink to MAP Tool (informational only - no direct equivalent)
+        /// Fetches the link data and returns information about linked CP/FF sessions
+        /// </summary>
+        [HttpPost("sessionlink/adamo/{cpSessionId}/{ffSessionId}")]
+        public async Task<IActionResult> TransformSessionLink(long cpSessionId, long ffSessionId)
+        {
+            if (_adamoContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Oracle not configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from ADAMO
+                var link = await _adamoContext.Map1SessionLinks
+                    .FirstOrDefaultAsync(l => l.CpSessionId == cpSessionId && l.FfSessionId == ffSessionId);
+
+                if (link == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"SessionLink CP:{cpSessionId}/FF:{ffSessionId} not found" });
+                }
+
+                // Step 2: This is a junction table - no direct MAP Tool equivalent
+                // Information only - shows the relationship between CP and FF sessions
+                Console.WriteLine($"✓ Found MAP1_SESSION_LINK: CP:{cpSessionId} ↔ FF:{ffSessionId}");
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = "MAP1_SESSION_LINK retrieved (junction table - no MAP Tool equivalent)",
+                    source = new { database = "ADAMO", table = "MAP1_SESSION_LINK" },
+                    data = new
+                    {
+                        cpSessionId = link.CpSessionId,
+                        ffSessionId = link.FfSessionId,
+                        note = "This links Consumer Preference and Fine Fragrance sessions in ADAMO. MAP Tool uses different evaluation tracking structure."
+                    },
+                    transformation = "N/A - Junction table, no direct equivalent in MAP Tool"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get SessionLink");
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform ADAMO SubmittingIgnoredMolecules to MAP Tool Molecule status
+        /// Fetches ignored molecule and optionally updates Molecule.Status = Ignore in MAP Tool
+        /// </summary>
+        [HttpPost("ignored-to-molecule/gr/{grNumber}")]
+        public async Task<IActionResult> TransformIgnoredMolecule(string grNumber, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from ADAMO
+                var ignored = await _adamoContext.IgnoredMolecules.FindAsync(grNumber);
+
+                if (ignored == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"GR_NUMBER {grNumber} not in ADAMO ignored list" });
+                }
+
+                // Step 2: Check if molecule exists in MAP Tool
+                var molecule = await _mapToolContext.Molecules.FirstOrDefaultAsync(m => m.GrNumber == grNumber);
+
+                Console.WriteLine($"✓ Found ignored molecule: {grNumber} (Entry by: {ignored.EntryPerson})");
+
+                // Step 3: Update molecule status if exists (or create with Ignore status)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    if (molecule != null)
+                    {
+                        // TODO: Uncomment when ready
+                        // molecule.Status = MoleculeStatus.Ignore;
+                        // await _mapToolContext.SaveChangesAsync();
+                        Console.WriteLine($"[DRY RUN] Would set Molecule '{grNumber}' Status = Ignore in MAP Tool");
+                    }
+                    else
+                    {
+                        // TODO: Uncomment when ready
+                        // Create molecule with Ignore status
+                        // var newMolecule = new Molecule { GrNumber = grNumber, Status = MoleculeStatus.Ignore, ... };
+                        // await _mapToolContext.Molecules.AddAsync(newMolecule);
+                        // await _mapToolContext.SaveChangesAsync();
+                        Console.WriteLine($"[DRY RUN] Would create Molecule '{grNumber}' with Status = Ignore in MAP Tool");
+                    }
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"Ignored molecule {grNumber} processed",
+                    source = new { database = "ADAMO", table = "SUBMITTING_IGNORED_MOLECULES" },
+                    ignoredInfo = new
+                    {
+                        grNumber = ignored.GrNumber,
+                        entryPerson = ignored.EntryPerson,
+                        entryDate = ignored.EntryDate
+                    },
+                    mapToolMolecule = molecule != null ? "Exists - would update Status to Ignore" : "Not found - would create with Ignore status",
+                    note = "MAP Tool has no IgnoredMolecules table - uses Molecule.Status = Ignore instead",
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process ignored molecule {GrNumber}", grNumber);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
         #endregion
     }
 
