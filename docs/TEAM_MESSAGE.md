@@ -82,4 +82,3 @@ Please review and provide feedback.
 ---
 
 Choose whichever style fits your team's communication! 🎯
-
