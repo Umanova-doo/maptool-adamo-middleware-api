@@ -273,11 +273,66 @@ namespace MAP2ADAMOINT.Controllers
         }
 
         /// <summary>
-        /// Transform ADAMO MapInitial to MAP Tool Molecule
+        /// Transform ADAMO MapInitial to MAP Tool Molecule (by ID)
+        /// End-to-end: Fetch from ADAMO by MapInitialId, transform, optionally write to MAP Tool
+        /// </summary>
+        [HttpPost("initial-to-molecule/{id}")]
+        public async Task<IActionResult> TransformInitialToMoleculeById(long id, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from ADAMO by ID
+                var initial = await _adamoContext.MapInitials.FindAsync(id);
+                if (initial == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"MapInitial {id} not found in ADAMO" });
+                }
+
+                // Step 2: Transform
+                var molecule = _mapper.MapInitialToMolecule(initial);
+
+                Console.WriteLine($"✓ Transformed MAP_INITIAL → Molecule: {initial.GrNumber} (ID: {id})");
+
+                // Step 3: Write to MAP Tool (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    // TODO: Uncomment when ready
+                    // Check if exists first
+                    // var exists = await _mapToolContext.Molecules.AnyAsync(m => m.GrNumber == initial.GrNumber);
+                    // if (!exists) {
+                    //     await _mapToolContext.Molecules.AddAsync(molecule);
+                    //     await _mapToolContext.SaveChangesAsync();
+                    // }
+                    Console.WriteLine($"[DRY RUN] Would insert Molecule '{initial.GrNumber}' to MAP Tool");
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"MAP_INITIAL → Molecule transformed for {initial.GrNumber}",
+                    source = new { database = "ADAMO", table = "MAP_INITIAL", id, grNumber = initial.GrNumber },
+                    transformed = molecule,
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform Initial→Molecule for ID {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform ADAMO MapInitial to MAP Tool Molecule (by GR_NUMBER)
         /// End-to-end: Fetch from ADAMO by GR_NUMBER, transform, optionally write to MAP Tool
         /// </summary>
         [HttpPost("initial-to-molecule/gr/{grNumber}")]
-        public async Task<IActionResult> TransformInitialToMolecule(string grNumber, [FromQuery] bool writeToDb = false)
+        public async Task<IActionResult> TransformInitialToMoleculeByGr(string grNumber, [FromQuery] bool writeToDb = false)
         {
             if (_adamoContext == null || _mapToolContext == null)
             {
@@ -455,11 +510,69 @@ namespace MAP2ADAMOINT.Controllers
         }
 
         /// <summary>
-        /// Transform ADAMO OdorCharacterization to MAP Tool (placeholder for complex mapping)
+        /// Transform ADAMO OdorCharacterization to MAP Tool (by ID)
+        /// This requires creating multiple OdorDetail records - complex transformation
+        /// </summary>
+        [HttpPost("odorchar-to-details/{id}")]
+        public async Task<IActionResult> TransformOdorCharToDetailsById(long id, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from ADAMO by ID
+                var odorChar = await _adamoContext.OdorCharacterizations.FindAsync(id);
+
+                if (odorChar == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"OdorCharacterization {id} not found in ADAMO" });
+                }
+
+                // Step 2: Extract family scores
+                var familyScores = _mapper.ExtractOdorFamilyScores(odorChar);
+
+                Console.WriteLine($"✓ Extracted odor family scores for {odorChar.GrNumber} (ID: {id}): {familyScores.Count} families");
+
+                var note = new
+                {
+                    message = "Complex transformation - requires OdorDetail record creation",
+                    steps = new[]
+                    {
+                        "1. Find or create Map1MoleculeEvaluation for this GR_NUMBER",
+                        "2. For each non-null descriptor score in ODOR_CHARACTERIZATION:",
+                        "3. Lookup corresponding OdorFamily and OdorDescriptor in MAP Tool",
+                        "4. Create OdorDetail record linking evaluation→family→descriptor with score",
+                        "5. Repeat for all 100+ descriptor fields"
+                    },
+                    currentImplementation = "Family scores extracted - OdorDetail creation not yet implemented"
+                };
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"ODOR_CHARACTERIZATION family scores extracted for {odorChar.GrNumber}",
+                    source = new { database = "ADAMO", table = "ODOR_CHARACTERIZATION", id, grNumber = odorChar.GrNumber },
+                    familyScores = familyScores,
+                    note = note,
+                    databaseWrite = "Not implemented - complex transformation required"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform OdorChar for ID {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform ADAMO OdorCharacterization to MAP Tool (by GR_NUMBER)
         /// This requires creating multiple OdorDetail records - complex transformation
         /// </summary>
         [HttpPost("odorchar-to-details/gr/{grNumber}")]
-        public async Task<IActionResult> TransformOdorCharToDetails(string grNumber, [FromQuery] bool writeToDb = false)
+        public async Task<IActionResult> TransformOdorCharToDetailsByGr(string grNumber, [FromQuery] bool writeToDb = false)
         {
             if (_adamoContext == null || _mapToolContext == null)
             {
@@ -526,11 +639,67 @@ namespace MAP2ADAMOINT.Controllers
         #region Reverse Transformations (MAP Tool → ADAMO)
 
         /// <summary>
-        /// Transform MAP Tool Molecule to ADAMO MapInitial
+        /// Transform MAP Tool Molecule to ADAMO MapInitial (by ID)
+        /// End-to-end: Fetch from MAP Tool by Molecule Id, transform, optionally write to ADAMO
+        /// </summary>
+        [HttpPost("molecule-to-initial/{id}")]
+        public async Task<IActionResult> TransformMoleculeToInitialById(int id, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from MAP Tool by ID
+                var molecule = await _mapToolContext.Molecules.FindAsync(id);
+                if (molecule == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"Molecule {id} not found in MAP Tool" });
+                }
+
+                // Step 2: Get evaluation data if available
+                var evaluation = await _mapToolContext.Map1_1MoleculeEvaluations
+                    .FirstOrDefaultAsync(e => e.MoleculeId == molecule.Id);
+
+                // Step 3: Transform
+                var mapInitial = _mapper.MapMoleculeToMapInitial(molecule, evaluation);
+
+                Console.WriteLine($"✓ Transformed Molecule → MAP_INITIAL: {molecule.GrNumber} (ID: {id})");
+
+                // Step 4: Write to ADAMO (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    var (success, message) = await _dbService.WriteToAdamo(mapInitial);
+                    if (!success)
+                    {
+                        return StatusCode(500, new { status = "fail", message = $"Write failed: {message}" });
+                    }
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"Molecule → MAP_INITIAL transformed for {molecule.GrNumber}",
+                    source = new { database = "MAP Tool", table = "Molecule", id, grNumber = molecule.GrNumber },
+                    transformed = mapInitial,
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform Molecule→Initial for ID {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform MAP Tool Molecule to ADAMO MapInitial (by GR_NUMBER)
         /// End-to-end: Fetch from MAP Tool by GR_NUMBER, transform, optionally write to ADAMO
         /// </summary>
         [HttpPost("molecule-to-initial/gr/{grNumber}")]
-        public async Task<IActionResult> TransformMoleculeToInitial(string grNumber, [FromQuery] bool writeToDb = false)
+        public async Task<IActionResult> TransformMoleculeToInitialByGr(string grNumber, [FromQuery] bool writeToDb = false)
         {
             if (_adamoContext == null || _mapToolContext == null)
             {
