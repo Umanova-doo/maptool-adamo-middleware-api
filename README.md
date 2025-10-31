@@ -1,13 +1,22 @@
-# MAP2ADAMOINT - Integration API
+# MAP2ADAMOINT - Integration Middleware API
 
 ## Overview
 
-**MAP2ADAMOINT** is a .NET 6 Web API that serves as a middleware layer between two database systems:
+**MAP2ADAMOINT** is a .NET 6 Web API middleware for data transformation and synchronization between two systems:
 
-- **MAP Tool** - PostgreSQL database (schema: `map_adm`)
-- **ADAMO** - Oracle database (schema: `GIV_MAP`)
+- **MAP Tool** - Molecule Assessment Program (PostgreSQL database, schema: `map_adm`)
+- **ADAMO** - Assessment Database System (Oracle database, schema: `GIV_MAP`)
 
-The API reads data from both databases, performs data model mapping, and synchronizes information between the two systems.
+The API provides **31 endpoints** for database lookups, bidirectional data transformation, and bulk migration.
+
+## ✅ Current Status
+
+- ✅ **31 Endpoints** operational (Health, Lookups, Transformations, Migration)
+- ✅ **8/8 ADAMO models** complete (all Oracle tables)
+- ✅ **6/6 MAP Tool models** complete (all core PostgreSQL tables)
+- ✅ **Both databases** connected and verified with real data
+- ✅ **Transformation logic** ready (database writes disabled by default)
+- ✅ **Bulk migration** ready (processes all entity types systematically)
 
 ## Architecture
 
@@ -57,21 +66,63 @@ MAP2ADAMOINT/
 └── README.md
 ```
 
-## API Endpoints
+## API Endpoints (31 Total)
 
-| Endpoint           | Method | Purpose                                       |
-| ------------------ | ------ | --------------------------------------------- |
-| `/health`          | GET    | Returns "OK" to confirm service is running    |
-| `/sync/from-map`   | POST   | Pull data from MAP Tool → map → send to ADAMO |
-| `/sync/from-adamo` | POST   | Pull data from ADAMO → map → send to MAP Tool |
+### Quick Overview
 
-### Example Response
+| Category | Count | Examples |
+|----------|-------|----------|
+| **Health & Debug** | 4 | `/health`, `/debug/test-oracle` |
+| **ADAMO Lookups** | 10 | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}` |
+| **MAP Tool Lookups** | 7 | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}` |
+| **Transformations** | 9 | `/transform/map-to-adamo`, `/transform/odorfamily/adamo-to-map/{id}` |
+| **Migration** | 1 | `/migration/adamo-to-maptool` |
 
+**See [docs/ALL_ENDPOINTS.md](docs/ALL_ENDPOINTS.md) for complete reference**
+
+### Example: Lookup by GR_NUMBER (ADAMO)
+
+**Request:**
+```bash
+GET /adamo/initial/gr/GR-50-0789-0
+```
+
+**Response** (Real data from Oracle):
 ```json
 {
   "status": "success",
-  "recordsProcessed": 24,
-  "message": "Successfully processed 24 records"
+  "table": "MAP_INITIAL",
+  "data": {
+    "grNumber": "GR-50-0789-0",
+    "chemist": "Goeke",
+    "odor0H": "agrestic, herbaceous, spicy (aniseed-like), a bit dirty",
+    "evaluationDate": "2008-01-25T00:00:00"
+  }
+}
+```
+
+### Example: End-to-End Transformation
+
+**Request:**
+```bash
+POST /transform/odorfamily/adamo-to-map/1
+```
+
+**What happens:**
+1. Fetches OdorFamily ID=1 from ADAMO Oracle database
+2. Transforms to MAP Tool format
+3. Returns transformed data (optionally writes to PostgreSQL)
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "OdorFamily transformed successfully",
+  "transformed": {
+    "name": "Ambergris",
+    "color": "#dadbdc",
+    "code": "AMBERGRIS_FAMILY"
+  }
 }
 ```
 
@@ -176,77 +227,95 @@ Run with:
 docker-compose up
 ```
 
-## Testing
+## Quick Start
 
-### 1. Health Check
-
-```bash
-curl http://localhost:8085/health
-```
-
-Expected response:
-
-```json
-{
-  "status": "OK",
-  "service": "MAP2ADAMOINT",
-  "timestamp": "2025-10-29T12:34:56Z"
-}
-```
-
-### 2. Sync from MAP Tool to ADAMO
+### Start the API
 
 ```bash
-curl -X POST http://localhost:8085/sync/from-map
+docker-compose up -d
 ```
 
-Expected console output:
-
-```
-✓ Sync from MAP to ADAMO completed successfully. Records: 24
-```
-
-### 3. Sync from ADAMO to MAP Tool
+### Test Database Connectivity
 
 ```bash
-curl -X POST http://localhost:8085/sync/from-adamo
+# Test PostgreSQL connection
+curl http://localhost:8085/debug/test-postgres
+
+# Test Oracle connection (verified with real data ✓)
+curl http://localhost:8085/debug/test-oracle
 ```
 
-Expected console output:
+### Lookup Data
 
+```bash
+# Lookup molecule from ADAMO Oracle (verified working ✓)
+curl http://localhost:8085/adamo/initial/gr/GR-50-0789-0
+
+# Lookup from MAP Tool PostgreSQL
+curl http://localhost:8085/maptool/molecule/gr/GR-88-0681-1
 ```
-✓ Sync from ADAMO to MAP completed successfully. Records: 15
+
+### Transform Data
+
+```bash
+# End-to-end: Fetch from ADAMO, transform to MAP Tool format
+curl -X POST http://localhost:8085/transform/odorfamily/adamo-to-map/1
+
+# Generic transformation with provided JSON
+curl -X POST http://localhost:8085/transform/map-to-adamo \
+  -H "Content-Type: application/json" \
+  -d '@test-map-to-adamo.json'
 ```
 
-## Data Mapping Logic
+## Database Models (Complete)
 
-The `DataMapperService` handles transformations between different data models:
+### ADAMO (Oracle) - 8/8 Tables ✓
 
-### MAP Tool → ADAMO
+- `MAP_INITIAL` - Initial molecule evaluations
+- `MAP_SESSION` - Evaluation sessions  
+- `MAP_RESULT` - Session results
+- `ODOR_CHARACTERIZATION` - Detailed odor profiling (100+ descriptor fields)
+- `MAP_ODOR_FAMILY` - 12 odor families
+- `MAP_ODOR_DESCRIPTOR` - 88 odor descriptors
+- `MAP1_SESSION_LINK` - CP/FF session links
+- `SUBMITTING_IGNORED_MOLECULES` - Ignored molecules list
 
-| MAP Tool (PostgreSQL)             | ADAMO (Oracle)        | Notes                           |
-| --------------------------------- | --------------------- | ------------------------------- |
-| `Molecule.GrNumber`               | `MapInitial.GrNumber` | Direct mapping                  |
-| `Molecule.ChemistName`            | `MapInitial.Chemist`  | Direct mapping                  |
-| `Map1_1MoleculeEvaluation.Odor0h` | `MapInitial.Odor0h`   | Direct mapping                  |
-| `Molecule.Status`                 | `MapInitial.Comments` | Converted to string in comments |
+### MAP Tool (PostgreSQL) - 6/6 Core Tables ✓
 
-### ADAMO → MAP Tool
+- `Molecule` - Molecule entities
+- `Assessment` - Assessment sessions
+- `Map1_1Evaluation` - MAP 1.1 evaluations
+- `Map1_1MoleculeEvaluation` - Molecule evaluation details
+- `OdorFamily` - Odor family reference
+- `OdorDescriptor` - Odor descriptor reference
 
-| ADAMO (Oracle)         | MAP Tool (PostgreSQL)               | Notes                             |
-| ---------------------- | ----------------------------------- | --------------------------------- |
-| `MapSession.SessionId` | `Assessment.SessionName`            | Formatted as "ADAMO Session {id}" |
-| `MapSession.Stage`     | `Assessment.Stage`                  | Direct mapping                    |
-| `MapResult.Odor`       | `Map1_1MoleculeEvaluation.Odor0h`   | Direct mapping                    |
-| `MapResult.Result`     | `Map1_1MoleculeEvaluation.ResultCP` | Numeric score mapping             |
+**See [docs/FIELD_MAPPING_REFERENCE.md](docs/FIELD_MAPPING_REFERENCE.md) for complete field mappings**
 
-## Known Limitations (Development Phase)
+## Features
 
-1. **Mock Operations**: Currently logs success/fail messages without actual database writes
-2. **Limited Entity Coverage**: Only core entities are modeled (not all 8+ tables)
-3. **Simplified Mapping**: Complex nested relationships require additional mapping logic
-4. **No Authentication**: Production deployment requires authentication middleware
-5. **No Error Recovery**: Transaction rollback and retry logic to be implemented
+### Current (Ready for Demo)
+
+✅ **Database Connectivity** - Both PostgreSQL and Oracle connected  
+✅ **Data Lookups** - 17 lookup endpoints by ID or GR_NUMBER  
+✅ **Generic Transformations** - Transform provided JSON data  
+✅ **End-to-End Transformations** - Fetch, transform, optionally write (7 endpoints)  
+✅ **Bulk Migration** - One-time transfer of all 6 entity types  
+✅ **Proper Configuration** - All credentials in appsettings.json (NO hardcoding)  
+✅ **Verified with Real Data** - Tested with actual Oracle database
+
+### Ready but Disabled (Production Features)
+
+⏸️ **Database Writes** - All insert logic commented out (dry-run mode)  
+⏸️ **Migration Execution** - Requires `EnableMigration: true` flag  
+⏸️ **OdorCharacterization Migration** - Complex (100+ OdorDetail records per entry)  
+
+### Future Enhancements
+
+- Authentication and authorization
+- Transaction management and rollback
+- Retry logic for failed operations
+- Incremental sync based on timestamps
+- Complete OdorDetail mapping implementation
 
 ## Next Steps (Post-Generation)
 
