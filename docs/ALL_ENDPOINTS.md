@@ -120,6 +120,7 @@ GET /migration/adamo-to-maptool → Just trigger migration with defaults
 **Use Case:** Someone just wants to click a link or hit URL once  
 **Settings:** Uses defaults (batch: 1000, all entity types enabled)  
 **Example:**
+
 ```bash
 # Simple - just GET the URL
 curl http://localhost:8085/migration/adamo-to-maptool
