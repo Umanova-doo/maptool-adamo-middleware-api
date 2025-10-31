@@ -67,35 +67,77 @@ GET /debug/test-both         → Test both databases
 
 ---
 
-## 🔄 Transformation (2 endpoints)
+## 🔄 Transformation (9 endpoints)
+
+### Generic Transformations (2)
 
 ```
-POST /transform/map-to-adamo     → Transform MAP Tool → ADAMO format
-POST /transform/adamo-to-map     → Transform ADAMO → MAP Tool format
+POST /transform/map-to-adamo     → Generic: Transform MAP Tool Molecule+Eval → ADAMO MapInitial
+POST /transform/adamo-to-map     → Generic: Transform ADAMO Session+Result → MAP Tool Assessment
 ```
+
+### Entity-Specific End-to-End Transformations (7)
+
+**ADAMO → MAP Tool:**
+
+| Endpoint | Fetch From | Transform To | Example |
+|----------|------------|--------------|---------|
+| `POST /transform/odorfamily/adamo-to-map/{id}` | ADAMO MAP_ODOR_FAMILY | MAP Tool OdorFamily | `/transform/odorfamily/adamo-to-map/1` |
+| `POST /transform/odordescriptor/adamo-to-map/{id}` | ADAMO MAP_ODOR_DESCRIPTOR | MAP Tool OdorDescriptor | `/transform/odordescriptor/adamo-to-map/63` |
+| `POST /transform/initial-to-molecule/gr/{grNumber}` | ADAMO MAP_INITIAL | MAP Tool Molecule | `/transform/initial-to-molecule/gr/GR-50-0789-0` |
+| `POST /transform/session-to-assessment/{sessionId}` | ADAMO MAP_SESSION | MAP Tool Assessment | `/transform/session-to-assessment/4111` |
+| `POST /transform/result-to-evaluation/{resultId}` | ADAMO MAP_RESULT | MAP Tool Map1_1MoleculeEvaluation | `/transform/result-to-evaluation/207` |
+| `POST /transform/odorchar-to-details/gr/{grNumber}` | ADAMO ODOR_CHARACTERIZATION | MAP Tool OdorDetails (complex) | `/transform/odorchar-to-details/gr/GR-50-0789-0` |
+
+**MAP Tool → ADAMO:**
+
+| Endpoint | Fetch From | Transform To | Example |
+|----------|------------|--------------|---------|
+| `POST /transform/molecule-to-initial/gr/{grNumber}` | MAP Tool Molecule | ADAMO MAP_INITIAL | `/transform/molecule-to-initial/gr/GR-50-0789-0` |
+| `POST /transform/assessment-to-session/{assessmentId}` | MAP Tool Assessment | ADAMO MAP_SESSION | `/transform/assessment-to-session/456` |
+
+**Query Parameters:**
+- `?writeToDb=true` - Write transformed data to target database (requires EnableDatabaseWrites=true)
+
+**Features:**
+- Fetches data from source database
+- Transforms to target format
+- Optionally writes to target database (commented out, dry-run mode)
+- All TODO items documented in code
 
 ---
 
 ## 📦 Migration (1 endpoint)
 
 ```
-POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool
+POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool (1000s of records)
 ```
 
 (Requires `EnableMigration: true`)
+
+**Request Body:**
+```json
+{
+  "batchSize": 1000,
+  "stageFilter": "MAP 3",
+  "afterDate": "2024-01-01",
+  "migrateInitialData": true
+}
+```
 
 ---
 
 ## 📊 Complete Endpoint Count
 
-| Category         | Count            |
-| ---------------- | ---------------- |
-| Health & Debug   | 4                |
-| ADAMO Lookups    | 10               |
-| MAP Tool Lookups | 7                |
-| Transformation   | 2                |
-| Migration        | 1                |
-| **TOTAL**        | **24 endpoints** |
+| Category | Count |
+| -------- | ----- |
+| Health & Debug | 4 |
+| ADAMO Lookups | 10 |
+| MAP Tool Lookups | 7 |
+| Generic Transformations | 2 |
+| Entity-Specific Transformations | 7 |
+| Migration | 1 |
+| **TOTAL** | **31 endpoints** |
 
 ---
 
@@ -104,30 +146,46 @@ POST /migration/adamo-to-maptool → Bulk migration ADAMO → MAP Tool
 ### ADAMO Lookups
 
 ```bash
-# Lookup MAP_INITIAL by ID
-curl http://localhost:8085/adamo/initial/12345
-
-# Lookup MAP_INITIAL by GR_NUMBER
-curl http://localhost:8085/adamo/initial/gr/GR-88-0681-1
+# Lookup MAP_INITIAL by GR_NUMBER (VERIFIED WORKING ✓)
+curl http://localhost:8085/adamo/initial/gr/GR-50-0789-0
 
 # Lookup Session
-curl http://localhost:8085/adamo/session/4111
+curl http://localhost:8085/adamo/session/5824
 
 # Lookup Odor Characterization by GR_NUMBER
-curl http://localhost:8085/adamo/odor/gr/GR-88-0681-1
+curl http://localhost:8085/adamo/odor/gr/GR-50-0789-0
+
+# Lookup Odor Family
+curl http://localhost:8085/adamo/odorfamily/1
 ```
 
 ### MAP Tool Lookups
 
 ```bash
-# Lookup Molecule by ID
-curl http://localhost:8085/maptool/molecule/123
-
 # Lookup Molecule by GR_NUMBER
 curl http://localhost:8085/maptool/molecule/gr/GR-88-0681-1
 
+# Lookup Molecule by ID
+curl http://localhost:8085/maptool/molecule/123
+
 # Lookup Assessment
 curl http://localhost:8085/maptool/assessment/456
+```
+
+### Entity-Specific Transformations
+
+```bash
+# Fetch from ADAMO, transform OdorFamily, return MAP Tool format (VERIFIED WORKING ✓)
+curl -X POST http://localhost:8085/transform/odorfamily/adamo-to-map/1
+
+# Fetch ADAMO MAP_INITIAL, transform to Molecule (VERIFIED WORKING ✓)
+curl -X POST http://localhost:8085/transform/initial-to-molecule/gr/GR-50-0789-0
+
+# Fetch ADAMO Session, transform to Assessment
+curl -X POST http://localhost:8085/transform/session-to-assessment/5824
+
+# With database write enabled (dry-run by default)
+curl -X POST "http://localhost:8085/transform/initial-to-molecule/gr/GR-50-0789-0?writeToDb=true"
 ```
 
 ---
@@ -208,4 +266,16 @@ All database connections use:
 
 ---
 
-**24 endpoints ready for your demo!** 🎉
+---
+
+## ✅ Verified Working Endpoints
+
+**Tested with Real Data:**
+- ✅ GET /adamo/initial/gr/GR-50-0789-0 → Found real molecule from Oracle
+- ✅ GET /debug/test-oracle → Connected, found 5 sessions
+- ✅ POST /transform/odorfamily/adamo-to-map/1 → Transformed "Ambergris" family
+- ✅ POST /transform/initial-to-molecule/gr/GR-50-0789-0 → Fetched & transformed
+
+---
+
+**31 endpoints ready for your demo!** 🎉
