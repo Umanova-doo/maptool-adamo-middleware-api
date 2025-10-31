@@ -7,11 +7,12 @@
 - **MAP Tool** - Molecule Assessment Program (PostgreSQL database, schema: `map_adm`)
 - **ADAMO** - Assessment Database System (Oracle database, schema: `GIV_MAP`)
 
-The API provides **31 endpoints** for database lookups, bidirectional data transformation, and bulk migration.
+The API provides **36 endpoints** for database lookups, bidirectional data transformation, and bulk migration.
 
 ## ✅ Current Status
 
-- ✅ **31 Endpoints** operational (Health, Lookups, Transformations, Migration)
+- ✅ **36 Endpoints** operational (Health, Lookups, Transformations, Migration)
+- ✅ **Complete entity coverage** - All 14 entities have transformation endpoints
 - ✅ **8/8 ADAMO models** complete (all Oracle tables)
 - ✅ **6/6 MAP Tool models** complete (all core PostgreSQL tables)
 - ✅ **Both databases** connected and verified with real data
@@ -75,8 +76,8 @@ MAP2ADAMOINT/
 | **Health & Debug**   | 4     | `/health`, `/debug/test-oracle`                                      |
 | **ADAMO Lookups**    | 10    | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}`                |
 | **MAP Tool Lookups** | 7     | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}`        |
-| **Transformations**  | 9     | `/transform/map-to-adamo`, `/transform/odorfamily/adamo-to-map/{id}` |
-| **Migration**        | 1     | `/migration/adamo-to-maptool`                                        |
+| **Transformations**  | 13    | `/transform/map-to-adamo`, `/transform/odorfamily/adamo-to-map/{id}` |
+| **Migration**        | 2     | `/migration/adamo-to-maptool` (GET + POST)                           |
 
 **See [docs/ALL_ENDPOINTS.md](docs/ALL_ENDPOINTS.md) for complete reference**
 
