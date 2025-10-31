@@ -751,6 +751,206 @@ namespace MAP2ADAMOINT.Controllers
         }
 
         /// <summary>
+        /// Transform MAP Tool OdorFamily to ADAMO OdorFamily
+        /// End-to-end: Fetch from MAP Tool by OdorFamilyId, transform, optionally write to ADAMO
+        /// </summary>
+        [HttpPost("odorfamily/maptool-to-adamo/{id}")]
+        public async Task<IActionResult> TransformOdorFamilyToAdamo(int id, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from MAP Tool
+                var mapToolFamily = await _mapToolContext.OdorFamilies.FindAsync(id);
+                if (mapToolFamily == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"OdorFamily {id} not found in MAP Tool" });
+                }
+
+                // Step 2: Transform to ADAMO format
+                var adamoFamily = new MapOdorFamily
+                {
+                    Name = mapToolFamily.Name,
+                    Color = mapToolFamily.Color,
+                    Code = mapToolFamily.Code
+                };
+
+                Console.WriteLine($"✓ Transformed OdorFamily → ADAMO MAP_ODOR_FAMILY: {mapToolFamily.Name}");
+
+                // Step 3: Write to ADAMO (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    // TODO: Uncomment when ready
+                    // Check if exists
+                    // var exists = await _adamoContext.OdorFamilies.AnyAsync(f => f.Code == mapToolFamily.Code);
+                    // if (!exists) {
+                    //     await _adamoContext.OdorFamilies.AddAsync(adamoFamily);
+                    //     await _adamoContext.SaveChangesAsync();
+                    // }
+                    Console.WriteLine($"[DRY RUN] Would insert OdorFamily '{adamoFamily.Name}' to ADAMO");
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"OdorFamily → MAP_ODOR_FAMILY transformed",
+                    source = new { database = "MAP Tool", table = "OdorFamily", id },
+                    transformed = adamoFamily,
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform OdorFamily→ADAMO for {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform MAP Tool OdorDescriptor to ADAMO OdorDescriptor
+        /// End-to-end: Fetch from MAP Tool by OdorDescriptorId, transform, optionally write to ADAMO
+        /// </summary>
+        [HttpPost("odordescriptor/maptool-to-adamo/{id}")]
+        public async Task<IActionResult> TransformOdorDescriptorToAdamo(int id, [FromQuery] bool writeToDb = false)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from MAP Tool
+                var mapToolDescriptor = await _mapToolContext.OdorDescriptors
+                    .Include(d => d.OdorFamily)
+                    .FirstOrDefaultAsync(d => d.Id == id);
+
+                if (mapToolDescriptor == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"OdorDescriptor {id} not found in MAP Tool" });
+                }
+
+                // Step 2: Transform to ADAMO format
+                // TODO: Lookup ADAMO FamilyId by family code
+                var adamoFamilyId = mapToolDescriptor.OdorFamilyId; // Placeholder - needs code-based lookup
+
+                var adamoDescriptor = new MapOdorDescriptor
+                {
+                    Name = mapToolDescriptor.Name,
+                    ProfileName = mapToolDescriptor.ProfileName,
+                    Code = mapToolDescriptor.Code,
+                    FamilyId = adamoFamilyId // TODO: Lookup ADAMO family ID by code
+                };
+
+                Console.WriteLine($"✓ Transformed OdorDescriptor → ADAMO MAP_ODOR_DESCRIPTOR: {mapToolDescriptor.Name}");
+
+                // Step 3: Write to ADAMO (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    // TODO: Uncomment when ready + implement family ID resolution
+                    // var exists = await _adamoContext.OdorDescriptors.AnyAsync(d => d.Code == mapToolDescriptor.Code);
+                    // if (!exists) {
+                    //     await _adamoContext.OdorDescriptors.AddAsync(adamoDescriptor);
+                    //     await _adamoContext.SaveChangesAsync();
+                    // }
+                    Console.WriteLine($"[DRY RUN] Would insert OdorDescriptor '{adamoDescriptor.Name}' to ADAMO");
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"OdorDescriptor → MAP_ODOR_DESCRIPTOR transformed",
+                    source = new { database = "MAP Tool", table = "OdorDescriptor", id },
+                    transformed = adamoDescriptor,
+                    note = "TODO: FamilyId requires lookup by family code",
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform OdorDescriptor→ADAMO for {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Transform MAP Tool Map1_1MoleculeEvaluation to ADAMO MapResult
+        /// End-to-end: Fetch from MAP Tool by MoleculeEvaluationId, transform, optionally write to ADAMO
+        /// </summary>
+        [HttpPost("moleculeevaluation-to-result/{id}")]
+        public async Task<IActionResult> TransformMoleculeEvaluationToResult(int id, [FromQuery] bool writeToDb = false, [FromQuery] long? sessionId = null)
+        {
+            if (_adamoContext == null || _mapToolContext == null)
+            {
+                return StatusCode(503, new { status = "fail", message = "Both databases must be configured" });
+            }
+
+            try
+            {
+                // Step 1: Fetch from MAP Tool
+                var moleculeEval = await _mapToolContext.Map1_1MoleculeEvaluations
+                    .Include(me => me.Molecule)
+                    .Include(me => me.Map1_1Evaluation)
+                    .FirstOrDefaultAsync(me => me.Id == id);
+
+                if (moleculeEval == null)
+                {
+                    return NotFound(new { status = "not_found", message = $"MoleculeEvaluation {id} not found in MAP Tool" });
+                }
+
+                // Step 2: Transform to ADAMO format
+                // TODO: Need to resolve or create ADAMO SessionId
+                var adamoSessionId = sessionId ?? 0; // Placeholder - needs session resolution
+
+                var result = new MapResult
+                {
+                    SessionId = adamoSessionId, // TODO: Lookup or create session in ADAMO
+                    GrNumber = moleculeEval.Molecule?.GrNumber ?? "",
+                    Odor = moleculeEval.Odor0h ?? moleculeEval.Odor4h ?? moleculeEval.Odor24h,
+                    BenchmarkComments = moleculeEval.Benchmark,
+                    Result = moleculeEval.ResultCP ?? moleculeEval.ResultFF,
+                    Dilution = "10%", // TODO: Map from dilution solvent
+                    Sponsor = moleculeEval.Map1_1Evaluation?.Participants,
+                    RegNumber = moleculeEval.Molecule?.RegNumber,
+                    CreatedBy = "SYNC",
+                    LastModifiedBy = "SYNC",
+                    CreationDate = DateTime.Now,
+                    LastModifiedDate = DateTime.Now
+                };
+
+                Console.WriteLine($"✓ Transformed Map1_1MoleculeEvaluation → MAP_RESULT: {moleculeEval.Molecule?.GrNumber}");
+
+                // Step 3: Write to ADAMO (if enabled)
+                if (_features.EnableDatabaseWrites && writeToDb)
+                {
+                    // TODO: Uncomment when ready + implement session ID resolution
+                    // await _adamoContext.MapResults.AddAsync(result);
+                    // await _adamoContext.SaveChangesAsync();
+                    Console.WriteLine($"[DRY RUN] Would insert MAP_RESULT for '{moleculeEval.Molecule?.GrNumber}' to ADAMO");
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = $"Map1_1MoleculeEvaluation → MAP_RESULT transformed",
+                    source = new { database = "MAP Tool", table = "Map1_1MoleculeEvaluation", id },
+                    transformed = result,
+                    note = "TODO: Requires ADAMO SessionId - pass as query param ?sessionId=4111 or implement session lookup/creation",
+                    databaseWrite = _features.EnableDatabaseWrites && writeToDb ? "[DRY RUN]" : "Disabled"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to transform MoleculeEvaluation→Result for {Id}", id);
+                return StatusCode(500, new { status = "fail", error = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Transform MAP Tool Assessment to ADAMO MapSession
         /// End-to-end: Fetch from MAP Tool by AssessmentId, transform, optionally write to ADAMO
         /// </summary>

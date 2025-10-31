@@ -67,7 +67,7 @@ GET /debug/test-both         → Test both databases
 
 ---
 
-## 🔄 Transformation (16 endpoints)
+## 🔄 Transformation (19 endpoints)
 
 ### Generic Transformations (2)
 
@@ -76,7 +76,7 @@ POST /transform/map-to-adamo     → Generic: Transform MAP Tool Molecule+Eval �
 POST /transform/adamo-to-map     → Generic: Transform ADAMO Session+Result → MAP Tool Assessment
 ```
 
-### Entity-Specific End-to-End Transformations (14)
+### Entity-Specific End-to-End Transformations (17)
 
 **ADAMO → MAP Tool (10 endpoints):**
 
@@ -93,14 +93,17 @@ POST /transform/adamo-to-map     → Generic: Transform ADAMO Session+Result →
 | 9   | `POST /transform/sessionlink/adamo/{cpId}/{ffId}`   | ADAMO MAP1_SESSION_LINK             | Info only (no MAP Tool equivalent) | `/transform/sessionlink/adamo/100/200`           |
 | 10  | `POST /transform/ignored-to-molecule/gr/{grNumber}` | ADAMO SUBMITTING_IGNORED_MOLECULES  | MAP Tool Molecule (Status=Ignore)  | `/transform/ignored-to-molecule/gr/GR-99-9999-9` |
 
-**MAP Tool → ADAMO (4 endpoints):**
+**MAP Tool → ADAMO (7 endpoints):**
 
-| #   | Endpoint                                               | Fetch From                       | Transform To      | Example                                          |
-| --- | ------------------------------------------------------ | -------------------------------- | ----------------- | ------------------------------------------------ |
-| 11  | `POST /transform/molecule-to-initial/{id}`             | MAP Tool Molecule (by ID)        | ADAMO MAP_INITIAL | `/transform/molecule-to-initial/123`             |
-| 12  | `POST /transform/molecule-to-initial/gr/{grNumber}`    | MAP Tool Molecule (by GR_NUMBER) | ADAMO MAP_INITIAL | `/transform/molecule-to-initial/gr/GR-50-0789-0` |
-| 13  | `POST /transform/assessment-to-session/{assessmentId}` | MAP Tool Assessment              | ADAMO MAP_SESSION | `/transform/assessment-to-session/456`           |
-| 14  | `POST /transform/evaluation-to-session/{evaluationId}` | MAP Tool Map1_1Evaluation        | ADAMO MAP_SESSION | `/transform/evaluation-to-session/789`           |
+| #   | Endpoint                                                  | Fetch From                       | Transform To               | Example                                          |
+| --- | --------------------------------------------------------- | -------------------------------- | -------------------------- | ------------------------------------------------ |
+| 11  | `POST /transform/odorfamily/maptool-to-adamo/{id}`        | MAP Tool OdorFamily              | ADAMO MAP_ODOR_FAMILY      | `/transform/odorfamily/maptool-to-adamo/5`       |
+| 12  | `POST /transform/odordescriptor/maptool-to-adamo/{id}`    | MAP Tool OdorDescriptor          | ADAMO MAP_ODOR_DESCRIPTOR  | `/transform/odordescriptor/maptool-to-adamo/25`  |
+| 13  | `POST /transform/molecule-to-initial/{id}`                | MAP Tool Molecule (by ID)        | ADAMO MAP_INITIAL          | `/transform/molecule-to-initial/123`             |
+| 14  | `POST /transform/molecule-to-initial/gr/{grNumber}`       | MAP Tool Molecule (by GR_NUMBER) | ADAMO MAP_INITIAL          | `/transform/molecule-to-initial/gr/GR-50-0789-0` |
+| 15  | `POST /transform/assessment-to-session/{assessmentId}`    | MAP Tool Assessment              | ADAMO MAP_SESSION          | `/transform/assessment-to-session/456`           |
+| 16  | `POST /transform/evaluation-to-session/{evaluationId}`    | MAP Tool Map1_1Evaluation        | ADAMO MAP_SESSION          | `/transform/evaluation-to-session/789`           |
+| 17  | `POST /transform/moleculeevaluation-to-result/{id}`       | MAP Tool Map1_1MoleculeEvaluation| ADAMO MAP_RESULT           | `/transform/moleculeevaluation-to-result/1011`   |
 
 **Query Parameters:**
 
@@ -180,9 +183,9 @@ POST /migration/adamo-to-maptool → Bulk migration with custom settings
 | ADAMO Lookups                   | 10               |
 | MAP Tool Lookups                | 7                |
 | Generic Transformations         | 2                |
-| Entity-Specific Transformations | 14               |
+| Entity-Specific Transformations | 17               |
 | Migration (GET + POST)          | 2                |
-| **TOTAL**                       | **39 endpoints** |
+| **TOTAL**                       | **42 endpoints** |
 
 ---
 
