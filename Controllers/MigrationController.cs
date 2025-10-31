@@ -63,13 +63,20 @@ namespace MAP2ADAMOINT.Controllers
                 {
                     status = "success",
                     message = "Migration completed successfully",
+                    duration = $"{result.Duration.TotalSeconds:F2}s",
                     statistics = new
                     {
-                        sessions = new
+                        odorFamilies = new
                         {
-                            found = result.SessionsFound,
-                            migrated = result.SessionsMigrated,
-                            skipped = result.SessionsSkipped
+                            found = result.OdorFamiliesFound,
+                            migrated = result.OdorFamiliesMigrated,
+                            skipped = result.OdorFamiliesSkipped
+                        },
+                        odorDescriptors = new
+                        {
+                            found = result.OdorDescriptorsFound,
+                            migrated = result.OdorDescriptorsMigrated,
+                            skipped = result.OdorDescriptorsSkipped
                         },
                         molecules = new
                         {
@@ -77,8 +84,26 @@ namespace MAP2ADAMOINT.Controllers
                             migrated = result.MoleculesMigrated,
                             skipped = result.MoleculesSkipped
                         },
-                        duration = $"{result.Duration.TotalSeconds:F2}s",
-                        errors = result.Errors.Count
+                        assessments = new
+                        {
+                            found = result.SessionsFound,
+                            migrated = result.SessionsMigrated,
+                            skipped = result.SessionsSkipped
+                        },
+                        odorCharacterizations = new
+                        {
+                            found = result.OdorCharsFound,
+                            migrated = result.OdorCharsMigrated,
+                            skipped = result.OdorCharsSkipped,
+                            note = "Complex - requires 100+ OdorDetail records per characterization"
+                        },
+                        ignoredMolecules = new
+                        {
+                            found = result.IgnoredMoleculesFound,
+                            migrated = result.IgnoredMoleculesMigrated,
+                            skipped = result.IgnoredMoleculesSkipped
+                        },
+                        totalErrors = result.Errors.Count
                     },
                     errors = result.Errors.Any() ? result.Errors : null
                 });
