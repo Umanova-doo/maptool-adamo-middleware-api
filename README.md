@@ -70,24 +70,26 @@ MAP2ADAMOINT/
 
 ### Quick Overview
 
-| Category | Count | Examples |
-|----------|-------|----------|
-| **Health & Debug** | 4 | `/health`, `/debug/test-oracle` |
-| **ADAMO Lookups** | 10 | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}` |
-| **MAP Tool Lookups** | 7 | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}` |
-| **Transformations** | 9 | `/transform/map-to-adamo`, `/transform/odorfamily/adamo-to-map/{id}` |
-| **Migration** | 1 | `/migration/adamo-to-maptool` |
+| Category             | Count | Examples                                                             |
+| -------------------- | ----- | -------------------------------------------------------------------- |
+| **Health & Debug**   | 4     | `/health`, `/debug/test-oracle`                                      |
+| **ADAMO Lookups**    | 10    | `/adamo/initial/gr/{grNumber}`, `/adamo/session/{id}`                |
+| **MAP Tool Lookups** | 7     | `/maptool/molecule/gr/{grNumber}`, `/maptool/assessment/{id}`        |
+| **Transformations**  | 9     | `/transform/map-to-adamo`, `/transform/odorfamily/adamo-to-map/{id}` |
+| **Migration**        | 1     | `/migration/adamo-to-maptool`                                        |
 
 **See [docs/ALL_ENDPOINTS.md](docs/ALL_ENDPOINTS.md) for complete reference**
 
 ### Example: Lookup by GR_NUMBER (ADAMO)
 
 **Request:**
+
 ```bash
 GET /adamo/initial/gr/GR-50-0789-0
 ```
 
 **Response** (Real data from Oracle):
+
 ```json
 {
   "status": "success",
@@ -104,16 +106,19 @@ GET /adamo/initial/gr/GR-50-0789-0
 ### Example: End-to-End Transformation
 
 **Request:**
+
 ```bash
 POST /transform/odorfamily/adamo-to-map/1
 ```
 
 **What happens:**
+
 1. Fetches OdorFamily ID=1 from ADAMO Oracle database
 2. Transforms to MAP Tool format
 3. Returns transformed data (optionally writes to PostgreSQL)
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -272,7 +277,7 @@ curl -X POST http://localhost:8085/transform/map-to-adamo \
 ### ADAMO (Oracle) - 8/8 Tables ✓
 
 - `MAP_INITIAL` - Initial molecule evaluations
-- `MAP_SESSION` - Evaluation sessions  
+- `MAP_SESSION` - Evaluation sessions
 - `MAP_RESULT` - Session results
 - `ODOR_CHARACTERIZATION` - Detailed odor profiling (100+ descriptor fields)
 - `MAP_ODOR_FAMILY` - 12 odor families
@@ -307,7 +312,7 @@ curl -X POST http://localhost:8085/transform/map-to-adamo \
 
 ⏸️ **Database Writes** - All insert logic commented out (dry-run mode)  
 ⏸️ **Migration Execution** - Requires `EnableMigration: true` flag  
-⏸️ **OdorCharacterization Migration** - Complex (100+ OdorDetail records per entry)  
+⏸️ **OdorCharacterization Migration** - Complex (100+ OdorDetail records per entry)
 
 ### Future Enhancements
 
