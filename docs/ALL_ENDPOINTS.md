@@ -24,7 +24,7 @@ GET /debug/test-both         → Test both databases
 
 ---
 
-## 🔍 ADAMO Lookups (8 endpoints)
+## 🔍 ADAMO Lookups (10 endpoints)
 
 **Base Route:** `/adamo/`
 
@@ -44,6 +44,44 @@ GET /debug/test-both         → Test both databases
 **Database:** Oracle (ADAMO)  
 **Schema:** GIV_MAP  
 **Tables:** MAP_INITIAL, MAP_SESSION, MAP_RESULT, ODOR_CHARACTERIZATION, MAP_ODOR_FAMILY, MAP_ODOR_DESCRIPTOR, MAP1_SESSION_LINK, SUBMITTING_IGNORED_MOLECULES
+
+---
+
+## ✨ ADAMO Creation Endpoints (4 endpoints) - **NEW & MOST IMPORTANT**
+
+**Base Route:** `/adamo/`
+
+These are the **primary endpoints for MapTool → Adamo integration**.
+
+| Endpoint                              | Action                   | Description                                             | Example Body File                       |
+| ------------------------------------- | ------------------------ | ------------------------------------------------------- | --------------------------------------- |
+| `POST /adamo/initial`                 | Create MAP_INITIAL       | Create new initial molecule evaluation record           | `test-create-map-initial.json`          |
+| `POST /adamo/session`                 | Create MAP_SESSION       | Create new evaluation session record                    | `test-create-map-session.json`          |
+| `POST /adamo/result`                  | Create MAP_RESULT        | Create individual result linked to existing session     | `test-create-map-result.json`           |
+| `POST /adamo/session-with-results` ⭐ | Create SESSION + RESULTS | Create session with multiple results in one transaction | `test-create-session-with-results.json` |
+
+**Database:** Oracle (ADAMO)  
+**Schema:** GIV_MAP  
+**Tables:** MAP_INITIAL, MAP_SESSION, MAP_RESULT
+
+**Documentation:**
+
+- [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md) - MAP_INITIAL and MAP_SESSION details
+- [MAP_RESULT_ENDPOINTS.md](./MAP_RESULT_ENDPOINTS.md) - MAP_RESULT and combined endpoint details
+- [MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](./MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md) - Complete integration guide for all 9 MapTool evaluation types
+
+**Key Features:**
+
+- ✅ Full validation with detailed error messages
+- ✅ Duplicate detection (409 Conflict for existing GR_NUMBER in MAP_INITIAL)
+- ✅ Auto-generation of IDs, REG_NUMBER, BATCH via database triggers
+- ✅ Stage validation for MAP_SESSION with helpful error messages
+- ✅ Foreign key validation (MAP_RESULT checks SESSION_ID exists)
+- ✅ **Atomic transactions** for session-with-results (all-or-nothing)
+- ✅ Comprehensive audit trail (CreatedBy, CreatedDate, etc.)
+- ✅ Returns complete records including auto-generated fields
+
+**⭐ RECOMMENDED:** Use `POST /adamo/session-with-results` for complete evaluations - creates session and all results in one atomic transaction!
 
 ---
 

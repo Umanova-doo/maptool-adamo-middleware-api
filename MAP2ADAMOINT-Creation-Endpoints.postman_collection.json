@@ -1,0 +1,272 @@
+{
+  "info": {
+    "name": "MAP2ADAMOINT - Creation Endpoints",
+    "_postman_id": "map2-adamoint-creation-001",
+    "description": "Collection for testing MAP_INITIAL and MAP_SESSION creation endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "ADAMO Creation",
+      "item": [
+        {
+          "name": "Create MAP_INITIAL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grNumber\": \"GR-25-0001-1\",\n  \"evaluationDate\": \"2025-11-03T10:00:00Z\",\n  \"chemist\": \"Smith\",\n  \"assessor\": \"Johnson, Williams\",\n  \"dilution\": \"10% in DPG\",\n  \"evaluationSite\": \"US\",\n  \"odor0H\": \"Fresh, citrus notes with slight floral undertones, clean and bright initial impression\",\n  \"odor4H\": \"Mellowed citrus, emerging woody notes, balanced sweetness\",\n  \"odor24H\": \"Woody base with lingering sweet notes, minimal citrus\",\n  \"comments\": \"Molecule shows good evolution over time. Consider for CP track evaluation.\",\n  \"createdBy\": \"APIUSER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/initial",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "initial"]
+            },
+            "description": "Creates a new MAP_INITIAL record with molecule evaluation data"
+          },
+          "response": []
+        },
+        {
+          "name": "Create MAP_SESSION",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stage\": \"MAP 1\",\n  \"evaluationDate\": \"2025-11-03T14:00:00Z\",\n  \"region\": \"US\",\n  \"segment\": \"CP\",\n  \"participants\": \"Johnson, Williams, Brown, Davis\",\n  \"showInTaskList\": \"Y\",\n  \"subStage\": 1,\n  \"category\": \"CP\",\n  \"createdBy\": \"APIUSER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/session",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "session"]
+            },
+            "description": "Creates a new MAP_SESSION record for evaluation sessions"
+          },
+          "response": []
+        },
+        {
+          "name": "Create MAP_INITIAL (Minimal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grNumber\": \"GR-25-0002-1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/initial",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "initial"]
+            },
+            "description": "Creates MAP_INITIAL with only required field (GR_NUMBER)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create MAP_SESSION (Minimal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stage\": \"MAP 2\",\n  \"segment\": \"FF\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/session",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "session"]
+            },
+            "description": "Creates MAP_SESSION with minimal fields"
+          },
+          "response": []
+        },
+        {
+          "name": "Create MAP_RESULT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": 5001,\n  \"grNumber\": \"GR-25-0003-1\",\n  \"odor\": \"Rosy, floral, peonile, geranium, interesting in DD but not powerful\",\n  \"benchmarkComments\": \"CP: Comparable to commercial standard. FF: Shows unique character worth exploring further.\",\n  \"result\": 4,\n  \"dilution\": \"10% in DPG\",\n  \"sponsor\": \"Project Phoenix Team\",\n  \"createdBy\": \"APIUSER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/result",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "result"]
+            },
+            "description": "Creates a single MAP_RESULT record linked to an existing session"
+          },
+          "response": []
+        },
+        {
+          "name": "Create SESSION with RESULTS (Combined)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session\": {\n    \"stage\": \"MAP 1\",\n    \"evaluationDate\": \"2025-11-03T14:00:00Z\",\n    \"region\": \"US\",\n    \"segment\": \"CP\",\n    \"participants\": \"Johnson, Williams, Brown, Davis, Martinez\",\n    \"showInTaskList\": \"Y\",\n    \"subStage\": 1,\n    \"category\": \"CP\",\n    \"createdBy\": \"APIUSER\"\n  },\n  \"results\": [\n    {\n      \"grNumber\": \"GR-25-0010-1\",\n      \"odor\": \"Fresh citrus top notes, bright and clean, with slight green undertones\",\n      \"benchmarkComments\": \"Outperforms current standard in initial impact. Similar longevity.\",\n      \"result\": 5,\n      \"dilution\": \"10% in DPG\",\n      \"sponsor\": \"Innovation Team A\"\n    },\n    {\n      \"grNumber\": \"GR-25-0011-1\",\n      \"odor\": \"Woody base with amber notes, warm and rounded character\",\n      \"benchmarkComments\": \"Comparable to benchmark B. More natural feel.\",\n      \"result\": 4,\n      \"dilution\": \"10% in DPG\",\n      \"sponsor\": \"Innovation Team A\"\n    },\n    {\n      \"grNumber\": \"GR-25-0012-1\",\n      \"odor\": \"Floral heart, rose and jasmine dominant, elegant and refined\",\n      \"benchmarkComments\": \"Superior to current floral standard. Excellent balance.\",\n      \"result\": 5,\n      \"dilution\": \"5% in DPG\",\n      \"sponsor\": \"Innovation Team B\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/adamo/session-with-results",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "session-with-results"]
+            },
+            "description": "Creates MAP_SESSION and multiple MAP_RESULT records in one atomic transaction"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for creating new records in ADAMO database"
+    },
+    {
+      "name": "ADAMO Lookups (Verify)",
+      "item": [
+        {
+          "name": "Get MAP_INITIAL by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/adamo/initial/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "initial", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123456",
+                  "description": "MAP_INITIAL_ID"
+                }
+              ]
+            },
+            "description": "Retrieves a MAP_INITIAL record by its ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get MAP_INITIAL by GR_NUMBER",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/adamo/initial/gr/:grNumber",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "initial", "gr", ":grNumber"],
+              "variable": [
+                {
+                  "key": "grNumber",
+                  "value": "GR-25-0001-1",
+                  "description": "GR_NUMBER"
+                }
+              ]
+            },
+            "description": "Retrieves a MAP_INITIAL record by GR_NUMBER"
+          },
+          "response": []
+        },
+        {
+          "name": "Get MAP_SESSION by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/adamo/session/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "session", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "5001",
+                  "description": "SESSION_ID"
+                }
+              ]
+            },
+            "description": "Retrieves a MAP_SESSION record by its ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get MAP_RESULT by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/adamo/result/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["adamo", "result", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "207",
+                  "description": "RESULT_ID"
+                }
+              ]
+            },
+            "description": "Retrieves a MAP_RESULT record by its ID"
+          },
+          "response": []
+        }
+      ],
+      "description": "GET endpoints to verify created records"
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Check if the API is running"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}
+
