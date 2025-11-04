@@ -695,6 +695,13 @@ namespace MAP2ADAMOINT.Controllers
 
                 Console.WriteLine($"✓ Created MAP_SESSION: ID {mapSession.SessionId} with {mapResults.Count} results");
 
+                // Clear navigation properties to avoid circular reference in JSON serialization
+                mapSession.Results = null;
+                foreach (var result in mapResults)
+                {
+                    result.Session = null;
+                }
+
                 return CreatedAtAction(
                     nameof(GetMapSession), 
                     new { id = mapSession.SessionId }, 
