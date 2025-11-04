@@ -1,6 +1,6 @@
 {
-  "grNumber": "GR-25-0001-1",
-  "evaluationDate": "2025-11-03T10:00:00Z",
+  "grNumber": "GR-87-1001-1",
+  "evaluationDate": "2025-11-04T10:00:00Z",
   "chemist": "Smith",
   "assessor": "Johnson, Williams",
   "dilution": "10% in DPG",
@@ -8,7 +8,6 @@
   "odor0H": "Fresh, citrus notes with slight floral undertones, clean and bright initial impression",
   "odor4H": "Mellowed citrus, emerging woody notes, balanced sweetness",
   "odor24H": "Woody base with lingering sweet notes, minimal citrus",
-  "comments": "Molecule shows good evolution over time. Consider for CP track evaluation.",
-  "createdBy": "APIUSER"
+  "comments": "Molecule shows good evolution over time. Consider for CP track evaluation."
 }
 

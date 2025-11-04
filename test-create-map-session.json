@@ -1,12 +1,11 @@
 {
   "stage": "MAP 1",
-  "evaluationDate": "2025-11-03T14:00:00Z",
+  "evaluationDate": "2025-11-04T14:00:00Z",
   "region": "US",
   "segment": "CP",
   "participants": "Johnson, Williams, Brown, Davis",
   "showInTaskList": "Y",
   "subStage": 1,
-  "category": "CP",
-  "createdBy": "APIUSER"
+  "category": "CP"
 }
 

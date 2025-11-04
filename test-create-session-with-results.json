@@ -1,18 +1,17 @@
 {
   "session": {
     "stage": "MAP 1",
-    "evaluationDate": "2025-11-03T14:00:00Z",
+    "evaluationDate": "2025-11-04T14:00:00Z",
     "region": "US",
     "segment": "CP",
     "participants": "Johnson, Williams, Brown, Davis, Martinez",
     "showInTaskList": "Y",
     "subStage": 1,
-    "category": "CP",
-    "createdBy": "APIUSER"
+    "category": "CP"
   },
   "results": [
     {
-      "grNumber": "GR-25-0010-1",
+      "grNumber": "GR-87-1010-1",
       "odor": "Fresh citrus top notes, bright and clean, with slight green undertones",
       "benchmarkComments": "Outperforms current standard in initial impact. Similar longevity.",
       "result": 5,
@@ -20,7 +19,7 @@
       "sponsor": "Innovation Team A"
     },
     {
-      "grNumber": "GR-25-0011-1",
+      "grNumber": "GR-87-1011-1",
       "odor": "Woody base with amber notes, warm and rounded character",
       "benchmarkComments": "Comparable to benchmark B. More natural feel.",
       "result": 4,
@@ -28,7 +27,7 @@
       "sponsor": "Innovation Team A"
     },
     {
-      "grNumber": "GR-25-0012-1",
+      "grNumber": "GR-87-1012-1",
       "odor": "Floral heart, rose and jasmine dominant, elegant and refined",
       "benchmarkComments": "Superior to current floral standard. Excellent balance.",
       "result": 5,
