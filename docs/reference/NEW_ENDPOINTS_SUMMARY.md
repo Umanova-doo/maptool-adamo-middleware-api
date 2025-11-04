@@ -534,10 +534,10 @@ After successfully creating these records:
 
 ## Need Help?
 
-- **Detailed Docs:** [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md)
+- **Detailed Docs:** [../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md)
 - **All Endpoints:** [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md)
-- **Database Structure:** [setup/adamo-DATABASE_STRUCTURE.md](./setup/adamo-DATABASE_STRUCTURE.md)
-- **API Examples:** [API_USAGE_EXAMPLES.md](./API_USAGE_EXAMPLES.md)
+- **Database Structure:** [../setup/adamo-DATABASE_STRUCTURE.md](../setup/adamo-DATABASE_STRUCTURE.md)
+- **API Examples:** [../guides/API_USAGE_EXAMPLES.md](../guides/API_USAGE_EXAMPLES.md)
 
 ---
 

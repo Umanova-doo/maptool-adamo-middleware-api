@@ -7,17 +7,21 @@
 - **MAP Tool** - Molecule Assessment Program (PostgreSQL database, schema: `map_adm`)
 - **ADAMO** - Assessment Database System (Oracle database, schema: `GIV_MAP`)
 
-The API provides **42 endpoints** for database lookups, bidirectional data transformation, and bulk migration.
+The API provides **46 endpoints** for database lookups, bidirectional data transformation, bulk migration, and data creation.
+
+**⭐ NEW (Nov 2025):** 4 new creation endpoints for MapTool → Adamo integration. See [docs/START_HERE.md](docs/START_HERE.md)
 
 ## ✅ Current Status
 
-- ✅ **42 Endpoints** operational (Health, Lookups, Transformations, Migration)
+- ✅ **46 Endpoints** operational (Health, Lookups, Transformations, Migration, **Creation**)
+- ✅ **4 NEW Creation Endpoints** for MapTool → Adamo integration (Nov 2025)
 - ✅ **Complete entity coverage** - All 14 entities have transformation endpoints
 - ✅ **8/8 ADAMO models** complete (all Oracle tables)
 - ✅ **6/6 MAP Tool models** complete (all core PostgreSQL tables)
 - ✅ **Both databases** connected and verified with real data
 - ✅ **Transformation logic** ready (database writes disabled by default)
 - ✅ **Bulk migration** ready (processes all entity types systematically)
+- ✅ **Atomic transaction support** for session+results creation
 
 ## Architecture
 
@@ -343,13 +347,21 @@ curl -X POST http://localhost:8085/transform/map-to-adamo \
 - **Dapper** (optional) - Direct SQL queries
 - **Swashbuckle** - Swagger/OpenAPI documentation
 
-## Support
+## 📚 Documentation
 
-For questions or issues, contact the development team or refer to:
+**Complete documentation is now organized in the [docs/](docs/) folder:**
 
-- `docs/MAP2-ADAMO-Integration-API-Specification.md`
-- `docs/adamo-DATABASE_STRUCTURE.md`
-- `docs/maptool-DATABASE-DOCUMENTATION.md`
+- **[docs/README.md](docs/README.md)** - Documentation navigation and index
+- **[docs/START_HERE.md](docs/START_HERE.md)** - Quick start for new developers
+- **[docs/endpoints/](docs/endpoints/)** - API endpoint documentation
+- **[docs/guides/](docs/guides/)** - Integration and usage guides
+- **[docs/reference/](docs/reference/)** - Quick references and summaries
+- **[docs/setup/](docs/setup/)** - Database schemas and setup guides
+
+**For the new creation endpoints:**
+
+- [docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md)
+- [docs/endpoints/MAP_RESULT_ENDPOINTS.md](docs/endpoints/MAP_RESULT_ENDPOINTS.md)
 
 ## License
 

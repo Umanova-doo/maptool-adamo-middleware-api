@@ -121,12 +121,12 @@ curl -X POST http://localhost:5000/adamo/result \
 
 ## 📚 Documentation
 
-| Document                                                                      | What's Inside                          |
-| ----------------------------------------------------------------------------- | -------------------------------------- |
-| **[IMPLEMENTATION_COMPLETE.md](docs/IMPLEMENTATION_COMPLETE.md)**             | Full summary, checklist, Q&A           |
-| **[MAP_INITIAL_SESSION_ENDPOINTS.md](docs/MAP_INITIAL_SESSION_ENDPOINTS.md)** | MAP_INITIAL and MAP_SESSION guide      |
-| **[MAP_RESULT_ENDPOINTS.md](docs/MAP_RESULT_ENDPOINTS.md)**                   | MAP_RESULT and combined endpoint guide |
-| **[NEW_ENDPOINTS_SUMMARY.md](docs/NEW_ENDPOINTS_SUMMARY.md)**                 | Quick reference for all 4 endpoints    |
+| Document                                                                              | What's Inside                          |
+| ------------------------------------------------------------------------------------- | -------------------------------------- |
+| **[IMPLEMENTATION_COMPLETE.md](../reference/IMPLEMENTATION_COMPLETE.md)**             | Full summary, checklist, Q&A           |
+| **[MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md)** | MAP_INITIAL and MAP_SESSION guide      |
+| **[MAP_RESULT_ENDPOINTS.md](../endpoints/MAP_RESULT_ENDPOINTS.md)**                   | MAP_RESULT and combined endpoint guide |
+| **[NEW_ENDPOINTS_SUMMARY.md](../reference/NEW_ENDPOINTS_SUMMARY.md)**                 | Quick reference for all 4 endpoints    |
 
 ## ✅ What You Get
 

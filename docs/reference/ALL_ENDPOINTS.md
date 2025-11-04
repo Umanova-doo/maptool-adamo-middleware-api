@@ -66,9 +66,9 @@ These are the **primary endpoints for MapTool → Adamo integration**.
 
 **Documentation:**
 
-- [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md) - MAP_INITIAL and MAP_SESSION details
-- [MAP_RESULT_ENDPOINTS.md](./MAP_RESULT_ENDPOINTS.md) - MAP_RESULT and combined endpoint details
-- [MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](./MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md) - Complete integration guide for all 9 MapTool evaluation types
+- [../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md) - MAP_INITIAL and MAP_SESSION details
+- [../endpoints/MAP_RESULT_ENDPOINTS.md](../endpoints/MAP_RESULT_ENDPOINTS.md) - MAP_RESULT and combined endpoint details
+- [../guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](../guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md) - Complete integration guide for all 9 MapTool evaluation types
 
 **Key Features:**
 

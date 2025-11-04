@@ -384,22 +384,22 @@ Same endpoint structure for MAP 1.1, MAP 1.2, MAP 2.1, MAP 2.2, MAP 3.0 - just c
 
 ### Start Here
 
-- **[QUICK_START_NEW_ENDPOINTS.md](../QUICK_START_NEW_ENDPOINTS.md)** - Get started in 3 steps
+- **[../guides/QUICK_START_NEW_ENDPOINTS.md](../guides/QUICK_START_NEW_ENDPOINTS.md)** - Get started in 3 steps
 
 ### API Reference
 
-- **[MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md)** - MAP_INITIAL and MAP_SESSION
-- **[MAP_RESULT_ENDPOINTS.md](./MAP_RESULT_ENDPOINTS.md)** - MAP_RESULT and combined endpoint
+- **[../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md)** - MAP_INITIAL and MAP_SESSION
+- **[../endpoints/MAP_RESULT_ENDPOINTS.md](../endpoints/MAP_RESULT_ENDPOINTS.md)** - MAP_RESULT and combined endpoint
 - **[ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md)** - Complete API reference
 
 ### Integration Guide (⭐ READ THIS!)
 
-- **[MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](./MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md)** - How to map all 9 evaluation types
+- **[../guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](../guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md)** - How to map all 9 evaluation types
 
 ### Database Reference
 
-- **[setup/adamo-DATABASE_STRUCTURE.md](./setup/adamo-DATABASE_STRUCTURE.md)** - Oracle schema
-- **[setup/maptool-DATABASE-DOCUMENTATION.md](./setup/maptool-DATABASE-DOCUMENTATION.md)** - PostgreSQL schema
+- **[../setup/adamo-DATABASE_STRUCTURE.md](../setup/adamo-DATABASE_STRUCTURE.md)** - Oracle schema
+- **[../setup/maptool-DATABASE-DOCUMENTATION.md](../setup/maptool-DATABASE-DOCUMENTATION.md)** - PostgreSQL schema
 
 ---
 

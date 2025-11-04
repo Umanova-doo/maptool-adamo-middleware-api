@@ -341,13 +341,13 @@ Map1_1Evaluation.Participants   → MAP_SESSION.PARTICIPANTS
 
 ## Documentation Index
 
-| Document                                                               | Purpose                                | Lines |
-| ---------------------------------------------------------------------- | -------------------------------------- | ----- |
-| [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md) | MAP_INITIAL and MAP_SESSION guide      | 565   |
-| [MAP_RESULT_ENDPOINTS.md](./MAP_RESULT_ENDPOINTS.md)                   | MAP_RESULT and combined endpoint guide | 450   |
-| [NEW_ENDPOINTS_SUMMARY.md](./NEW_ENDPOINTS_SUMMARY.md)                 | Quick reference and examples           | 400+  |
-| [IMPLEMENTATION_COMPLETE.md](./IMPLEMENTATION_COMPLETE.md)             | This summary                           | 500+  |
-| [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md)                                 | Complete endpoint reference            | 360+  |
+| Document                                                                                       | Purpose                                | Lines |
+| ---------------------------------------------------------------------------------------------- | -------------------------------------- | ----- |
+| [../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md) | MAP_INITIAL and MAP_SESSION guide      | 565   |
+| [../endpoints/MAP_RESULT_ENDPOINTS.md](../endpoints/MAP_RESULT_ENDPOINTS.md)                   | MAP_RESULT and combined endpoint guide | 450   |
+| [NEW_ENDPOINTS_SUMMARY.md](./NEW_ENDPOINTS_SUMMARY.md)                                         | Quick reference and examples           | 400+  |
+| [IMPLEMENTATION_COMPLETE.md](./IMPLEMENTATION_COMPLETE.md)                                     | This summary                           | 500+  |
+| [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md)                                                         | Complete endpoint reference            | 360+  |
 
 ---
 
@@ -420,14 +420,14 @@ Use this checklist when testing the new endpoints:
 
 ### Primary Documentation
 
-- **Detailed Guide:** [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md)
+- **Detailed Guide:** [../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md](../endpoints/MAP_INITIAL_SESSION_ENDPOINTS.md)
 - **Quick Reference:** [NEW_ENDPOINTS_SUMMARY.md](./NEW_ENDPOINTS_SUMMARY.md)
 - **This Summary:** [IMPLEMENTATION_COMPLETE.md](./IMPLEMENTATION_COMPLETE.md)
 
 ### Related Documentation
 
 - [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md) - Complete API reference
-- [API_USAGE_EXAMPLES.md](./API_USAGE_EXAMPLES.md) - Usage examples
+- [../guides/API_USAGE_EXAMPLES.md](../guides/API_USAGE_EXAMPLES.md) - Usage examples
 - [adamo-DATABASE_STRUCTURE.md](./setup/adamo-DATABASE_STRUCTURE.md) - Database schema
 - [maptool-DATABASE_DOCUMENTATION.md](./setup/maptool-DATABASE_DOCUMENTATION.md) - MapTool schema
 

@@ -441,6 +441,6 @@ After successfully creating MAP_INITIAL and MAP_SESSION records, you may want to
 
 For questions or issues:
 
-1. Check the [API_USAGE_EXAMPLES.md](./API_USAGE_EXAMPLES.md) for more examples
-2. Review [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md) for complete endpoint reference
-3. Consult [adamo-DATABASE_STRUCTURE.md](./setup/adamo-DATABASE_STRUCTURE.md) for database details
+1. Check the [API_USAGE_EXAMPLES.md](../guides/API_USAGE_EXAMPLES.md) for more examples
+2. Review [ALL_ENDPOINTS.md](../reference/ALL_ENDPOINTS.md) for complete endpoint reference
+3. Consult [adamo-DATABASE_STRUCTURE.md](../setup/adamo-DATABASE_STRUCTURE.md) for database details

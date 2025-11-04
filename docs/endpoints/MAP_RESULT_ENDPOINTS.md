@@ -754,5 +754,5 @@ After successfully creating sessions and results:
 ## Support
 
 - **Main Guide:** [MAP_INITIAL_SESSION_ENDPOINTS.md](./MAP_INITIAL_SESSION_ENDPOINTS.md)
-- **All Endpoints:** [ALL_ENDPOINTS.md](./ALL_ENDPOINTS.md)
-- **Database Schema:** [setup/adamo-DATABASE_STRUCTURE.md](./setup/adamo-DATABASE_STRUCTURE.md)
+- **All Endpoints:** [../reference/ALL_ENDPOINTS.md](../reference/ALL_ENDPOINTS.md)
+- **Database Schema:** [../setup/adamo-DATABASE_STRUCTURE.md](../setup/adamo-DATABASE_STRUCTURE.md)
