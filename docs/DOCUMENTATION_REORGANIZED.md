@@ -8,6 +8,7 @@
 ## Before vs After
 
 ### ❌ Before (Messy)
+
 ```
 Project Root/
 ├── QUICK_START_NEW_ENDPOINTS.md
@@ -24,6 +25,7 @@ Project Root/
 ```
 
 ### ✅ After (Organized)
+
 ```
 Project Root/
 ├── README.md (updated with docs link)
@@ -43,41 +45,46 @@ Project Root/
 
 ## Quick Access
 
-| I Need To... | Go Here |
-|--------------|---------|
-| **Start as new dev** | [docs/START_HERE.md](docs/START_HERE.md) |
-| **Navigate docs** | [docs/README.md](docs/README.md) |
-| **Test endpoints** | [docs/guides/QUICK_START_NEW_ENDPOINTS.md](docs/guides/QUICK_START_NEW_ENDPOINTS.md) |
-| **Integrate** | [docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md) |
-| **See all endpoints** | [docs/reference/ALL_ENDPOINTS.md](docs/reference/ALL_ENDPOINTS.md) |
+| I Need To...          | Go Here                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Start as new dev**  | [docs/START_HERE.md](docs/START_HERE.md)                                                               |
+| **Navigate docs**     | [docs/README.md](docs/README.md)                                                                       |
+| **Test endpoints**    | [docs/guides/QUICK_START_NEW_ENDPOINTS.md](docs/guides/QUICK_START_NEW_ENDPOINTS.md)                   |
+| **Integrate**         | [docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md](docs/guides/MAPTOOL_TO_ADAMO_INTEGRATION_GUIDE.md) |
+| **See all endpoints** | [docs/reference/ALL_ENDPOINTS.md](docs/reference/ALL_ENDPOINTS.md)                                     |
 
 ---
 
 ## What's Where
 
 ### 📡 docs/endpoints/ - API Endpoint Docs
+
 - MAP_INITIAL and MAP_SESSION endpoints
 - MAP_RESULT and combined endpoint ⭐
 - Debug endpoints
 
 ### 📖 docs/guides/ - How-To Guides
+
 - Integration guide for all 9 MapTool evaluation types ⭐
 - Quick starts
 - Postman testing
 - Configuration guides
 
 ### 🔍 docs/reference/ - Quick References
+
 - All endpoints list (46 total)
 - Summaries and recaps
 - Visual guides
 - Implementation details
 
 ### 🛠️ docs/setup/ - Database & Setup
+
 - Oracle database schema (complete)
 - PostgreSQL database schema (complete)
 - Credentials and Docker setup
 
 ### 📦 docs/archive/ - Historical
+
 - Old summaries and recaps
 - Kept for reference but out of the way
 
@@ -100,4 +107,3 @@ Project Root/
 ✅ **Scalable for future growth**
 
 **Next:** Start at [docs/START_HERE.md](docs/START_HERE.md)!
-
