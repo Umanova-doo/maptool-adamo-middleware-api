@@ -9,15 +9,15 @@ namespace MAP2ADAMOINT.Services
     /// Simple API client to call the hosted MAP2ADAMO API
     /// Ivan: Drop this into your MapTool application and call these methods
     /// </summary>
-    public class MapToOracleApiClient
+    public class SyncApiClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<MapToOracleApiClient> _logger;
+        private readonly ILogger<SyncApiClient> _logger;
 
         // TODO: Replace with your actual hosted API URL
         private const string API_BASE_URL = "https://YOUR-API-URL-HERE.com";  // ← CHANGE THIS
 
-        public MapToOracleApiClient(HttpClient httpClient, ILogger<MapToOracleApiClient> logger)
+        public SyncApiClient(HttpClient httpClient, ILogger<SyncApiClient> logger)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(API_BASE_URL);
