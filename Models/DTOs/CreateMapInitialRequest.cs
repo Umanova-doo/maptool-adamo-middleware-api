@@ -9,13 +9,13 @@ namespace MAP2ADAMOINT.Models.DTOs
     {
         /// <summary>
         /// GR Number - Unique molecule identifier (REQUIRED)
-        /// Format: GR-YY-NNNN-B or GR-YY-NNNNN-B (e.g., "GR-87-0857-0" or "GR-88-06811-1")
-        /// Example: "GR-87-0857-0"
+        /// Format: GR-YY-NNNN-B, TS-YY-NNNN-B, or GR-YY-NNNNN-B (e.g., "GR-87-0857-0", "TS-87-0857-0", or "GR-88-06811-1")
+        /// Example: "GR-87-0857-0" or "TS-87-0857-0"
         /// </summary>
         [Required(ErrorMessage = "GR_NUMBER is required")]
         [StringLength(14, ErrorMessage = "GR_NUMBER must be 14 characters or less")]
-        [RegularExpression(@"^GR-\d{2}-\d{4,5}-\d{1}$|^SL-\d{6}-\d{1}$", 
-            ErrorMessage = "GR_NUMBER must be in format GR-YY-NNNN-B or GR-YY-NNNNN-B (e.g., 'GR-87-0857-0')")]
+        [RegularExpression(@"^(GR|TS)-\d{2}-\d{4,5}-\d{1}$|^SL-\d{6}-\d{1}$", 
+            ErrorMessage = "GR_NUMBER must be in format GR-YY-NNNN-B, TS-YY-NNNN-B, or GR-YY-NNNNN-B (e.g., 'GR-87-0857-0' or 'TS-87-0857-0')")]
         public string GrNumber { get; set; } = string.Empty;
 
         /// <summary>

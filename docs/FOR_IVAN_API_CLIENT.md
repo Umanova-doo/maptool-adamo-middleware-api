@@ -201,6 +201,21 @@ public class TestOracleInsert
 
 ## ⚠️ Important Notes
 
+### GR Number Format
+
+The API accepts multiple molecule number formats:
+
+- **GR format**: `GR-YY-NNNN-B` (e.g., `GR-87-0857-0`)
+- **TS format**: `TS-YY-NNNN-B` (e.g., `TS-87-0857-0`)
+- **SL format**: `SL-NNNNNN-B` (e.g., `SL-123456-1`)
+
+Examples:
+
+- ✅ `GR-87-0857-0`
+- ✅ `TS-87-0857-0`
+- ✅ `GR-88-06811-1` (5 digits also supported)
+- ✅ `SL-123456-1`
+
 ### Database Configuration
 
 **The hosted API currently connects to a local Docker Oracle instance.**
@@ -277,4 +292,3 @@ On error:
 ---
 
 That's it! 4 endpoints, simple usage. 🚀
-

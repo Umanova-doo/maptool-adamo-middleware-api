@@ -6,15 +6,21 @@ Based on your answers, here's what was updated:
 
 ---
 
-### 1. GR_NUMBER Format Validation ✅ DONE
+### 1. GR_NUMBER Format Validation ✅ DONE (Updated Nov 19, 2025)
 
 **Your Requirement:** "Should perhaps always be GR-87 and then 4 digits and 1 digit? GR-86-0857-0?"
+
+**UPDATE (Nov 19, 2025):** Extended to support TS format
 
 **Implemented:**
 
 - Added regex validation to all GR_NUMBER fields
-- Pattern: `GR-YY-NNNN-B` or `GR-YY-NNNNN-B` (4 or 5 digits supported)
-- Example: `GR-87-0857-0` ✅ or `GR-88-06811-1` ✅
+- Pattern: `(GR|TS)-YY-NNNN-B` or `(GR|TS)-YY-NNNNN-B` (4 or 5 digits supported)
+- **Now accepts both GR and TS prefixes**
+- Examples: 
+  - `GR-87-0857-0` ✅ 
+  - `TS-87-0857-0` ✅ (NEW)
+  - `GR-88-06811-1` ✅
 - Also supports: `SL-NNNNNN-B` format
 
 **Files Updated:**
@@ -30,7 +36,7 @@ Based on your answers, here's what was updated:
   "status": "fail",
   "message": "Validation failed",
   "errors": [
-    "GR_NUMBER must be in format GR-YY-NNNN-B or GR-YY-NNNNN-B (e.g., 'GR-87-0857-0')"
+    "GR_NUMBER must be in format GR-YY-NNNN-B, TS-YY-NNNN-B, or GR-YY-NNNNN-B (e.g., 'GR-87-0857-0' or 'TS-87-0857-0')"
   ]
 }
 ```
