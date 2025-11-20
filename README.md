@@ -9,12 +9,18 @@
 
 The API provides **46 endpoints** for database lookups, bidirectional data transformation, bulk migration, and data creation.
 
-**⭐ NEW (Nov 2025):** 4 new creation endpoints for MapTool → Adamo integration. See [docs/START_HERE.md](docs/START_HERE.md)
+**⭐ NEW (Nov 2025):** 
+- 4 new creation endpoints for MapTool → Adamo integration
+- **SessionLink support** for duplicate prevention (UPSERT behavior)
+- **TS-format** molecule numbers now supported (GR-XX-XXXX-X and TS-XX-XXXX-X)
+
+See [docs/START_HERE.md](docs/START_HERE.md)
 
 ## ✅ Current Status
 
 - ✅ **46 Endpoints** operational (Health, Lookups, Transformations, Migration, **Creation**)
 - ✅ **4 NEW Creation Endpoints** for MapTool → Adamo integration (Nov 2025)
+- ✅ **SessionLink UPSERT** prevents duplicate session creation (Nov 20, 2025)
 - ✅ **Complete entity coverage** - All 14 entities have transformation endpoints
 - ✅ **8/8 ADAMO models** complete (all Oracle tables)
 - ✅ **6/6 MAP Tool models** complete (all core PostgreSQL tables)

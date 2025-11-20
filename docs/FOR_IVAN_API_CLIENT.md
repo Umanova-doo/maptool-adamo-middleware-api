@@ -52,7 +52,7 @@ var response = await apiClient.CreateMapInitial(request);
 
 ### 2. Create MAP_SESSION (Evaluation Session)
 
-Creates an evaluation session in Oracle.
+Creates an evaluation session in Oracle. **Now supports UPSERT** - if you provide a `SessionLink` and it already exists, it will update the existing session instead of creating a duplicate.
 
 ```csharp
 var request = new CreateMapSessionRequest
@@ -62,12 +62,19 @@ var request = new CreateMapSessionRequest
     Region = "NA",
     Segment = "CP",
     Participants = "Ivan, Sarah, Mike",
+    SessionLink = "MAPTOOL_SESSION_12345",  // Optional: Use to prevent duplicates
     CreatedBy = "IVAN"
 };
 
 var response = await apiClient.CreateMapSession(request);
 // Response will include the auto-generated SessionId
+// Response also includes isUpdate flag to indicate if session was updated or created
 ```
+
+**How SessionLink works:**
+- If `SessionLink` is provided and exists → **Updates** existing session
+- If `SessionLink` is not provided or doesn't exist → **Creates** new session
+- Use your MapTool session ID or unique identifier as the SessionLink value
 
 ---
 
@@ -95,7 +102,7 @@ var response = await apiClient.CreateMapResult(request);
 
 ### 4. Create SESSION + RESULTS (All-in-One)
 
-Creates a session and multiple results in one call (recommended).
+Creates a session and multiple results in one call (recommended). **Supports UPSERT** - use `SessionLink` to update existing sessions instead of creating duplicates.
 
 ```csharp
 var request = new CreateSessionWithResultsRequest
@@ -107,6 +114,7 @@ var request = new CreateSessionWithResultsRequest
         Region = "NA",
         Segment = "CP",
         Participants = "Ivan, Sarah",
+        SessionLink = "MAPTOOL_SESSION_12345",  // Prevents duplicate sessions
         CreatedBy = "IVAN"
     },
     Results = new List<CreateMapResultRequest>
@@ -200,6 +208,35 @@ public class TestOracleInsert
 ---
 
 ## ⚠️ Important Notes
+
+### Session Link (Prevents Duplicates) 🆕
+
+**NEW:** Use `SessionLink` to prevent duplicate session creation!
+
+When creating sessions, provide a unique `SessionLink` (e.g., your MapTool session ID):
+
+```csharp
+Session = new CreateMapSessionRequest
+{
+    SessionLink = "MAPTOOL_SESSION_12345",  // Use your internal session ID
+    Stage = "MAP 1",
+    Segment = "CP",
+    // ... other fields
+}
+```
+
+**How it works:**
+- First call with `SessionLink = "MAPTOOL_SESSION_12345"` → **Creates new** session
+- Second call with same `SessionLink` → **Updates existing** session (no duplicate!)
+- Response includes `isUpdate` or `isSessionUpdate` flag
+
+**Benefits:**
+- ✅ No more duplicate sessions when API is called multiple times
+- ✅ Safe to retry failed requests
+- ✅ Can update session details later
+- ✅ Links MapTool sessions to ADAMO sessions
+
+---
 
 ### GR Number Format
 

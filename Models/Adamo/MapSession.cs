@@ -54,6 +54,10 @@ namespace MAP2ADAMOINT.Models.Adamo
         [Column("CATEGORY")]
         public string? Category { get; set; }
 
+        [StringLength(50)]
+        [Column("SESSION_LINK")]
+        public string? SessionLink { get; set; }
+
         // Navigation properties
         public virtual ICollection<MapResult>? Results { get; set; }
     }

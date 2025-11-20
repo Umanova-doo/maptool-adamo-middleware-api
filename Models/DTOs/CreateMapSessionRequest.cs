@@ -63,6 +63,14 @@ namespace MAP2ADAMOINT.Models.DTOs
         public string? Category { get; set; }
 
         /// <summary>
+        /// Session link - unique identifier from MapTool to prevent duplicate session creation
+        /// Use this as a unique reference to link MapTool sessions to ADAMO sessions
+        /// Max length: 50 characters
+        /// </summary>
+        [StringLength(50, ErrorMessage = "SessionLink must be 50 characters or less")]
+        public string? SessionLink { get; set; }
+
+        /// <summary>
         /// User who is creating this record (for audit trail)
         /// Max length: 8 characters
         /// </summary>

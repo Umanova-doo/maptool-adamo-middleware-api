@@ -6,6 +6,53 @@ Based on your answers, here's what was updated:
 
 ---
 
+### 0. SESSION_LINK for Duplicate Prevention ✅ DONE (Nov 20, 2025)
+
+**Your Requirement:** Add SESSION_LINK column to prevent duplicate session creation and implement UPSERT behavior
+
+**Implemented:**
+
+- Added `SessionLink` property to `MapSession` model (column: `SESSION_LINK`, max 50 chars)
+- Added `SessionLink` field to `CreateMapSessionRequest` DTO
+- Implemented UPSERT logic in both session endpoints:
+  - `POST /adamo/session` - Creates or updates session based on SessionLink
+  - `POST /adamo/session-with-results` - Creates or updates session with results
+
+**How it works:**
+
+1. **With SessionLink provided:**
+   - First call → Creates new session with the SessionLink
+   - Subsequent calls → Updates existing session (no duplicate!)
+   
+2. **Without SessionLink:**
+   - Always creates new session (legacy behavior)
+
+**Files Updated:**
+
+- `Models/Adamo/MapSession.cs` - Added SessionLink property
+- `Models/DTOs/CreateMapSessionRequest.cs` - Added SessionLink field
+- `Controllers/AdamoController.cs` - Implemented UPSERT logic
+- `docs/FOR_IVAN_API_CLIENT.md` - Added SessionLink documentation
+
+**Response includes:**
+
+```json
+{
+  "status": "success",
+  "message": "MAP_SESSION record updated successfully",
+  "isUpdate": true,  // or false for new creation
+  "data": { ... }
+}
+```
+
+**Benefits:**
+- ✅ No duplicate sessions when API called multiple times
+- ✅ Safe retry mechanism
+- ✅ Links MapTool sessions to ADAMO sessions
+- ✅ Can update session details after creation
+
+---
+
 ### 1. GR_NUMBER Format Validation ✅ DONE (Updated Nov 19, 2025)
 
 **Your Requirement:** "Should perhaps always be GR-87 and then 4 digits and 1 digit? GR-86-0857-0?"
