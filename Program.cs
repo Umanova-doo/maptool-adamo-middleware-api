@@ -17,7 +17,7 @@ Console.WriteLine("════════════════════�
 Console.WriteLine("  MAP2ADAMOINT Middleware API");
 Console.WriteLine("  Data transformation between ADAMO and MAP Tool");
 Console.WriteLine("═══════════════════════════════════════════════════════");
-
+//test
 // Configure database contexts - reads from appsettings.json ConnectionStrings section
 var mapToolConnStr = builder.Configuration.GetConnectionString("MapToolDb");
 var adamoConnStr = builder.Configuration.GetConnectionString("AdamoDb");
